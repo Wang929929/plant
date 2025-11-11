@@ -27,11 +27,17 @@ void Shovel::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
     QDrag *drag = new QDrag(event -> widget());
     QMimeData *mime = new QMimeData;
     QImage image(":/image/shop/Shovel.png");
+    QImage scaledImage = image.scaled(
+        image.width() * 0.5,
+        image.height() * 0.5,
+        Qt::KeepAspectRatio,
+        Qt::SmoothTransformation
+        );
     mime->setText("Shovel");
     mime->setImageData(image);
     drag->setMimeData(mime);
-    drag->setPixmap(QPixmap::fromImage(image));
-    drag->setHotSpot(QPoint(35, 35));
+    drag->setPixmap(QPixmap::fromImage(scaledImage));
+    drag->setHotSpot(QPoint(35 * 0.5, 35 * 0.5));
     drag->exec();
     setCursor(Qt::ArrowCursor);
 }
