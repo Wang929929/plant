@@ -16,6 +16,7 @@ SOURCES += \
     map.cpp \
     plant.cpp \
     shop.cpp \
+    shovel.cpp\
     sun.cpp \
     sunflower.cpp \
     zombies.cpp
