@@ -57,6 +57,8 @@
         <file>sounds/background_music.MP3</file>
         <file>sounds/victory.wav</file>
         <file>image/shop/Shop.png</file>
+        <file>image/shop/Shovel.png</file>
+        <file>image/shop/ShopBank.png</file>
         <file>image/cards/Card.png</file>
         <file>image/cards/Peashooter.png</file>
         <file>image/cards/SunFlower.png</file>
