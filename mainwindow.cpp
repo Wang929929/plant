@@ -41,6 +41,10 @@ MainWindow::MainWindow(QWidget *parent)
     Shop *shop = new Shop;
     shop->setPos(300, 15);
     scene->addItem(shop);
+    //初始化shovel
+    Shovel *shovel = new Shovel;
+    shovel->setPos(825, 65);
+    scene->addItem(shovel);
 
     //创建按钮
     muteButton = new QPushButton("Mute", this);
