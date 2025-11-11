@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "shop.h"
+#include "shovel.h"
 #include <QVector>
 #include <QRandomGenerator>
 #include <QPushButton>
