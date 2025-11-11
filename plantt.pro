@@ -16,6 +16,8 @@ SOURCES += \
     map.cpp \
     plant.cpp \
     shop.cpp \
+    sun.cpp \
+    sunflower.cpp \
     zombies.cpp
 
 HEADERS += \
@@ -27,6 +29,7 @@ HEADERS += \
     plant.h \
     shop.h \
     shovel.h \
+    sun.h \
     sunflower.h \
     zombies.h
 
