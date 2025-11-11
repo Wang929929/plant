@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>image/Background.jpg</file>
+        <file>image/Sun.gif</file>
         <file>image/zombie/Zombie_0.png</file>
         <file>image/zombie/Zombie_1.png</file>
         <file>image/zombie/Zombie_2.png</file>
@@ -58,5 +59,7 @@
         <file>image/shop/Shop.png</file>
         <file>image/cards/Card.png</file>
         <file>image/cards/Peashooter.png</file>
+        <file>image/cards/SunFlower.png</file>
+        <file>image/plant/SunFlower.gif</file>
     </qresource>
 </RCC>
