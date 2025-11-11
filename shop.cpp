@@ -1,4 +1,8 @@
 #include "shop.h"
+#include "plant.h"
+#include "card.h"
+#include "peashooter.h"
+#include "sunflower.h"
 
 #include <QPainter>
 #include <QGraphicsScene>
