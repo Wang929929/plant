@@ -3,6 +3,11 @@
 
 #include "plant.h"
 
-class SunFlower : public Plant{};
+class SunFlower : public Plant{
+public:
+    SunFlower();
+    void advance(int phase) override;
+};
 
 #endif // SUNFLOWER_H
+
