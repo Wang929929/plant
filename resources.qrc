@@ -2,14 +2,14 @@
     <qresource prefix="/">
         <file>image/Background.jpg</file>
         <file>image/Sun.gif</file>
-        <file>image/zombie/zombie_die/ZombieDie.gif</file>
+        <file>image/zombie_die/zombie_die/ZombieDie.gif</file>
         <file>image/zombie_eat/ZombieAttack.gif</file>
         <file>image/zombie/ZombieWalk2.gif</file>
         <file>image/zombie_eat/BucketZombieAttack.gif</file>
         <file>image/zombie/BucketZombieWalk.gif</file>
         <file>image/zombie_eat/ConeZombieAttack.gif</file>
         <file>image/zombie/ConeZombieWalk.gif</file>
-        <file>image/zombie/zombie_die/FootballZombieDie.gif</file>
+        <file>image/zombie_die/zombie_die/FootballZombieDie.gif</file>
         <file>image/zombie_eat/FootballZombieAttack.gif</file>
         <file>image/zombie/FootballZombieWalk.gif</file>
         <file>sounds/background_music.MP3</file>
