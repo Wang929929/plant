@@ -5,66 +5,52 @@
 #include <QGraphicsObject>
 #include <QGraphicsScene>
 #include <QTimer>
+#include <QPainter>
+#include <QMovie>
 
 class Zombies : public QGraphicsObject
 {
     Q_OBJECT
+
 public:
-    Zombies(QString name,bool isStand,QGraphicsScene * scene,QObject * parents = nullptr);
-    ~Zombies();
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR) override;
+    explicit Zombies(QString name, bool isStand, QGraphicsScene *scene, QObject *parent = nullptr);
+    ~Zombies() override;
+
+    // Qt 基础接口
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
     QRectF boundingRect() const override;
+    void advance(int phase) override;
 
-    //设置僵尸动画
-    void loadZombieCartoon();
-    //设置僵尸动画图片数量
-    void setCartoonPixmap();
-    //僵尸行走
-    void goWalk();
-    //僵尸吃植物
-    void doEating();
-    //吃完植物
-    void eatOver();
-    //减少生命值
-    void lessHealth();
-    //死亡动画
-    void dead();
+    // 僵尸行为接口
+    void doEating();     // 开始吃植物
+    void eatOver();      // 停止吃植物
+    void lessHealth();   // 受到伤害
+    void dead();         // 死亡逻辑
 
-    //是否死亡
-    bool isDead;
+
+    enum { Type = UserType + 2 };
+    int type() const override { return Type; }
+
+private:
+    void initZombieStats();     // 初始化血量等基础数据
+    void setMovie(const QString &path); // 切换动画
+    void updateAnimation();     // 检测状态变化并更新动画
+
 private:
     QString m_name;
-    bool isStand;
-    //判断是否在吃植物
-    bool isEating;
-    //僵尸是否在最左边
-    bool isLeft;
-    //僵尸图片路径
-    QString zombiePixmap;
-    //僵尸移动速度
-    int cartoonSpeed;
-    //当前僵尸数量
-    int cartoonNum;
-    //总共僵尸数量（打完就赢）
-    int allcantoonNum;
-    //僵尸吃植物动画
-    int allEatcartoonNum;
-    //僵尸生命
-    int health;
+    bool isStand = false;
+    bool isDead = false;
+    bool isDelete = false;
+    bool isEating = false;
+    bool isLeft = false;
+    bool touchingPlant;
 
-
-    //走路定时器
-    QTimer * walkTimer;
-    //已经死了
-    bool isDelete;
-    //记录死亡动画数量 当前数量
-    int deadCartoonNum;
-    //动画计时器
-    QTimer * cartoonTimer;
+    int healthPoints = 10;
+    QMovie *movie = nullptr;
+    QString currentState = ""; // 当前动画状态（walk / eat / die）
 
 signals:
 
 };
 
 #endif // ZOMBIES_H
-
