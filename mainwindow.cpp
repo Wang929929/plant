@@ -92,40 +92,36 @@ MainWindow::MainWindow(QWidget *parent)
     this->showBeginStandZombies();
 
     connect(timer, &QTimer::timeout, scene, &QGraphicsScene::advance);
+    // // 立即生成几个用于测试的僵尸（可删）!!!!!如果要测试就把下面的commend解除掉
+    // for (int i = 0; i < 3; ++i)
+    //     outZombies();
+
+    // // 自动生成僵尸计时器（每 5 秒生成一个）用来测试的，不用管这个
+    // QTimer *spawnTimer = new QTimer(this);
+    // connect(spawnTimer, &QTimer::timeout, this, [this]() {
+    //     outZombies();
+    // });
+    // spawnTimer->start(5000); // 每5秒生成一个新僵尸
 }
 
-void MainWindow::showBeginStandZombies()
+void MainWindow::showBeginStandZombies()//开场动画，让我们种植物的时候僵尸出现的的
 {
-    Zombies *zombie = new Zombies("normalZombie", true, scene, this);
-    zombie->setPos(900, 0);   // 第一行靠右
-    zombiesVector.push_back(zombie);
+    static const QVector<QPointF> zombiePositions = {
+        {900, 20}, {900, 120}, {900, 220},
+        {900, 320}, {930, 320}, {930, 120}, {900, 420}
+    };
 
-    zombie = new Zombies("normalZombie", true, scene, this);
-    zombie->setPos(900, 100);   // 第二行稍下
-    zombiesVector.push_back(zombie);
+    for (const QPointF &pos : zombiePositions)
+    {
+        Zombies *zombie = new Zombies("normalZombie", true, scene, this);
+        zombie->setPos(pos);
+        zombiesVector.append(zombie);
+    }
 
-    zombie = new Zombies("normalZombie", true, scene, this);
-    zombie->setPos(900, 200);    // 第三行中间
-    zombiesVector.push_back(zombie);
-
-    zombie = new Zombies("normalZombie", true, scene, this);
-    zombie->setPos(900, 300);    // 和上面的错开一点
-    zombiesVector.push_back(zombie);
-
-    zombie = new Zombies("normalZombie", true, scene, this);
-    zombie->setPos(930, 300);    // 更靠下的行
-    zombiesVector.push_back(zombie);
-
-    zombie = new Zombies("normalZombie", true, scene, this);
-    zombie->setPos(930, 100);    // 稍微靠右一点
-    zombiesVector.push_back(zombie);
-
-    zombie = new Zombies("normalZombie", true, scene, this);
-    zombie->setPos(900, 400);    // 最下面一行
-    zombiesVector.push_back(zombie);
+    qDebug() << "Initialized" << zombiesVector.size() << "stand zombies.";
 }
 
-void MainWindow::deleteBeginZombie()
+void MainWindow::deleteBeginZombie()//正式开始的时候调用这个，删掉开场僵尸
 {
     for (QVector<Zombies *>::iterator it = this->zombiesVector.begin();
          it != this->zombiesVector.end();
@@ -133,24 +129,39 @@ void MainWindow::deleteBeginZombie()
     {
         delete *it;
     }
-}//删掉开场的僵尸（开始游戏后把那些站着的僵尸删掉）
-void MainWindow::outZombies()//开场随机生成僵尸
+}
+void MainWindow::outZombies()//僵尸随机出现，游戏开始
 {
+    if (gameOver || isPaused)
+        return;
 
-    auto spawnZombie = [=](int count) {
-        for (int i = 0; i < count; ++i) {
-            int randomY = QRandomGenerator::global()->bounded(5);
-            Zombies *zombie = new Zombies("normalZombie", false, this->scene, this);
-            zombie->setPos(900, randomY * 100);
-        }
-    };
+    // 最大僵尸数量
+    if (ZombiesNum >= 40)
+        return;
 
-    // 定时生成僵尸
-    QTimer::singleShot(0, this, [=]() { spawnZombie(1); });
-    QTimer::singleShot(20000, this, [=]() { spawnZombie(2); });
-    QTimer::singleShot(40000, this, [=]() { spawnZombie(3); });
-    QTimer::singleShot(60000, this, [=]() { spawnZombie(2); });
-    QTimer::singleShot(80000, this, [=]() { spawnZombie(4); });
+    // 以概率生成，降低出现频率
+    if (QRandomGenerator::global()->bounded(100) < 20) // 50% 概率不生成
+        return;
+
+    // 随机生成普通僵尸或铁桶僵尸
+    QString type;
+    int randValue = QRandomGenerator::global()->bounded(100); // 0~99
+    if (randValue < 70)             // 0~69 → 普通僵尸（50%）
+        type = "normalZombie";
+    else if (randValue < 85)        // 60~84 → 路障僵尸（30%）
+        type = "ConeZombie";
+    else if (randValue < 95)                          // 85~94 → 铁桶僵尸（20%）
+        type = "bucketZombie";
+    else
+        type ="footballZombie";
+
+    // 生成随机行走僵尸
+    int randomY = QRandomGenerator::global()->bounded(6) * 100 + 20;
+    Zombies *zombie = new Zombies(type, false, scene, this);
+    zombie->setPos(900, randomY);
+    zombiesVector.append(zombie);
+
+    qDebug() << "Spawned" << type << "at y =" << randomY << ", total zombies:" << ZombiesNum;
 }
 
 // 在析构函数后实现功能
