@@ -9,11 +9,6 @@
 #include <QMap>
 #include <QPixmap>
 
-#include "plant.h"
-#include "card.h"
-#include "peashooter.h"
-#include "sunflower.h"
-
 // 向前声明，用于鼠标事件
 class QGraphicsSceneMouseEvent;
 

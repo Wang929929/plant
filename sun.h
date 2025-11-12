@@ -11,6 +11,7 @@
 class Sun : public QGraphicsItem{
 public:
     Sun(QPointF pos);
+    Sun();
     ~Sun() override;
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;

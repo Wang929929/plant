@@ -12,6 +12,7 @@
 #include "audiomanager.h"  // 添加音频管理器头文件
 #include "map.h"
 #include "zombies.h"
+#include "sun.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -38,6 +39,7 @@ private slots:
     void togglePause();     // 暂停/继续
     void checkGameState();  // 检查游戏状态
     void showVolumeMenu();  // 新增这行：显示音量菜单
+    void spawnSun();        // 【谢嘉翔】新增这行：生成随机掉落的太阳
 
 private:
     Ui::MainWindow *ui;
@@ -53,6 +55,7 @@ private:
     QTimer *gameStateTimer;     // 游戏状态检查定时器
     QPushButton *volumeButton;  // 新增：音量调节按钮
     AudioManager *audioManager; // 新增：音频管理器
+    QTimer *sunSpawnTimer;      // 【谢嘉翔】新增这行：太阳生成定时器
 
     // 游戏状态变量
     bool isMuted;

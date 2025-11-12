@@ -8,6 +8,8 @@
 #include <QMessageBox>
 #include <QLabel>
 
+#include "sun.h"
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -46,6 +48,14 @@ MainWindow::MainWindow(QWidget *parent)
     Shovel *shovel = new Shovel;
     shovel->setPos(825, 65);
     scene->addItem(shovel);
+    // 【谢嘉翔添加】: 初始化并启动太阳生成定时器
+    sunSpawnTimer = new QTimer(this);
+    connect(sunSpawnTimer, &QTimer::timeout, this, &MainWindow::spawnSun);
+    sunSpawnTimer->start(10000); // 每 10 秒掉落一个
+    timer -> start(33);
+    view->show();
+    this->showBeginStandZombies();
+    connect(timer, &QTimer::timeout, scene, &QGraphicsScene::advance);
 
     //创建按钮
     muteButton = new QPushButton("Mute", this);
@@ -199,14 +209,16 @@ void MainWindow::togglePause()
         pauseButton->setStyleSheet("QPushButton { background-color: red; font-size: 14px; }");
         // 暂停游戏逻辑
         gameStateTimer->stop(); // 暂停状态检查
-        timer->stop(); // 暂停主游戏计时器
+        timer->stop();          // 暂停主游戏计时器
+        sunSpawnTimer->stop();  //【谢嘉翔】暂停太阳生成
         qDebug() << "The game has been paused";
     } else {
         pauseButton->setText("Pause");
         pauseButton->setStyleSheet("QPushButton { background-color: lightgreen; font-size: 14px; }");
         // 继续游戏逻辑
         gameStateTimer->start(100); // 恢复状态检查
-        timer->start(33); // 恢复主游戏计时器
+        timer->start(33);           // 恢复主游戏计时器
+        sunSpawnTimer->start();     //【谢嘉翔】恢复太阳生成
         qDebug() << "The game continues";
     }
 }
@@ -230,6 +242,7 @@ void MainWindow::checkGameState()
         gameOver = true;
         gameStateTimer->stop();
         timer->stop();
+        sunSpawnTimer->stop();  //【谢嘉翔】暂停太阳生成
 
         QMessageBox::information(this, "游戏结束", "僵尸吃掉了你的脑子！游戏失败！");
         qDebug() << "游戏失败：僵尸到达左侧";
@@ -240,6 +253,7 @@ void MainWindow::checkGameState()
         gameOver = true;
         gameStateTimer->stop();
         timer->stop();
+        sunSpawnTimer->stop();  //【谢嘉翔】暂停太阳生成
 
         QMessageBox::information(this, "游戏胜利", "恭喜你击败了所有僵尸！");
         qDebug() << "游戏胜利：所有僵尸被消灭";
@@ -285,7 +299,14 @@ void MainWindow::showVolumeMenu()
     }
 }
 
+// 【谢嘉翔添加】: 实现生成太阳的槽函数
+void MainWindow::spawnSun(){
+    if (gameOver || isPaused)
+        return;
 
+    Sun *sun = new Sun();
+    scene->addItem(sun);
+}
 
 MainWindow::~MainWindow()
 {
@@ -298,6 +319,7 @@ MainWindow::~MainWindow()
     delete pauseButton;
     delete volumeButton;
     delete gameStateTimer;
+    delete sunSpawnTimer;//【谢嘉翔】
 }
 
 int MainWindow::ZombiesNum = 0;

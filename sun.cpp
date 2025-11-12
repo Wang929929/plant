@@ -15,6 +15,21 @@ Sun::Sun(QPointF pos){
     setAcceptedMouseButtons(Qt::LeftButton);
 }
 
+// 【谢嘉翔添加】: 随机掉落太阳的构造函数
+Sun::Sun(){
+    int randomX = QRandomGenerator::global()->bounded(150, 900);// X 坐标范围
+    int randomY_dest = QRandomGenerator::global()->bounded(100, 500);// Y 坐标
+    position = QPointF(randomX, randomY_dest);// 设置最终目标位置
+    setPos(randomX, 0);// 设置初始位置（在屏幕顶端）
+
+    // 初始化其他变量
+    counter = 0;
+    time = int(10.0 * 1000 / 33);
+    movie = new QMovie(":/image/Sun.gif");
+    movie->start();
+    setAcceptedMouseButtons(Qt::LeftButton);
+}
+
 Sun::~Sun(){
     delete movie;
 }
@@ -47,5 +62,5 @@ void Sun::advance(int phase)
         return;
     update();
     if (y() < position.y())
-        setY(y() + 30);
+        setY(y() + 2);//谢嘉翔修改参数。原为30
 }

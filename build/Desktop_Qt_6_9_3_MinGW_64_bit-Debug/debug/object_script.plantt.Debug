@@ -1,0 +1,17 @@
+debug/audiomanager.o
+debug/card.o
+debug/main.o
+debug/mainwindow.o
+debug/map.o
+debug/plant.o
+debug/shop.o
+debug/shovel.o
+debug/sun.o
+debug/sunflower.o
+debug/zombies.o
+debug/qrc_resources.o
+debug/qrc_qmake_qmake_qm_files.o
+debug/moc_audiomanager.o
+debug/moc_mainwindow.o
+debug/moc_shop.o
+debug/moc_zombies.o

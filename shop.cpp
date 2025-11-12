@@ -15,12 +15,11 @@
 #include <QTimer>
 #include <QDebug>
 #include <QHash>
-#include <functional>
 
 
-Shop::Shop() : m_sun(200)
-{
-    // Req 1: 搭建选择植物的图框(共8个）
+
+Shop::Shop() : m_sun(200){
+    // 搭建图框(共8个）
     Card *card = nullptr;
     for (int i = 0; i < Card::name.size(); ++i)
     {
@@ -38,24 +37,22 @@ Shop::Shop() : m_sun(200)
 }
 
 // boundingRect 和 paint 函数保持不变)
-QRectF Shop::boundingRect() const
-{
+QRectF Shop::boundingRect() const{
     return QRectF(0, 0, 800, 100);
 }
 
-void Shop::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-{
+void Shop::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
     painter->save();
 
-    // 2. 绘制太阳币图标和数量
+    // 绘制太阳币
     //QRectF sunIconRect(-70, 20, 70, 50);
-    QRectF sunIconRect(-70, 0, 650, 100);// 太阳币图标(shop)的位置 (x, y, w, h)
-    QRectF sunTextRect(-40, 60, 50, 50); // 太阳文本的位置
+    QRectF sunIconRect(-70, 0, 650, 100);// 太阳币图标的位置 (x, y, w, h)
+    QRectF sunTextRect(-40, 60, 50, 50); // 太阳币文本的位置 (x, y, w, h)
 
-    // 绘制太阳图标
+    // 绘制图标
     QPixmap sunIcon(":/image/shop/Shop.png");
     if (!sunIcon.isNull()) {
         painter->drawPixmap(sunIconRect, sunIcon, sunIcon.rect());
@@ -64,17 +61,15 @@ void Shop::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
         painter->setBrush(Qt::yellow);
         painter->drawRect(sunIconRect);
     }
-    // 绘制太阳文本
+    // 绘制文本
     painter->setPen(Qt::black);
     painter->setFont(QFont("Arial", 16, QFont::Bold));
     painter->drawText(sunTextRect, Qt::AlignCenter, QString::number(m_sun));
     painter->restore();
 }
 
-// 在指定位置添加一个植物，由 Map::dropEvent 调用
-
-void Shop::addPlant(QString s, QPointF pos)
-{
+// 添加植物
+void Shop::addPlant(QString s, QPointF pos){
     if (!scene()) {
         qDebug() << "Planting failed: Shop has no scene.";
         return;
@@ -90,8 +85,7 @@ void Shop::addPlant(QString s, QPointF pos)
 
 
     Plant *plant = nullptr;
-    switch (Card::index[s])
-    {
+    switch (Card::index[s]){
     case 0:
         plant = new SunFlower; break;
     case 1:
@@ -120,12 +114,11 @@ void Shop::addPlant(QString s, QPointF pos)
     }
 }
 
-//增加太阳币 (公共接口)
-void Shop::addSun(int amount)
-{
+//增加太阳币
+void Shop::addSun(int amount){
     m_sun += amount;
     qDebug() << "Added" << amount << "sun. Total:" << m_sun;
-    update(); // 重绘以显示新的太阳币数量
+    update(); // 重绘
 }
 
 

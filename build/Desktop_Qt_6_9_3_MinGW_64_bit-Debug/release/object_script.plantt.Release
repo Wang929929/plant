@@ -1,0 +1,17 @@
+release/audiomanager.o
+release/card.o
+release/main.o
+release/mainwindow.o
+release/map.o
+release/plant.o
+release/shop.o
+release/shovel.o
+release/sun.o
+release/sunflower.o
+release/zombies.o
+release/qrc_resources.o
+release/qrc_qmake_qmake_qm_files.o
+release/moc_audiomanager.o
+release/moc_mainwindow.o
+release/moc_shop.o
+release/moc_zombies.o
