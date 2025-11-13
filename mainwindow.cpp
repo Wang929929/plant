@@ -166,7 +166,7 @@ void MainWindow::outZombies()//僵尸随机出现，游戏开始
         type ="footballZombie";
 
     // 生成随机行走僵尸
-    int randomY = QRandomGenerator::global()->bounded(6) * 100 + 20;
+    int randomY = QRandomGenerator::global()->bounded(5) * 100 + 20;
     Zombies *zombie = new Zombies(type, false, scene, this);
     zombie->setPos(900, randomY);
     zombiesVector.append(zombie);
