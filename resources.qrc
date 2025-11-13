@@ -19,7 +19,9 @@
         <file>image/shop/ShovelBank.png</file>
         <file>image/cards/Card.png</file>
         <file>image/cards/Peashooter.png</file>
+        <file>image/cards/Potato.png</file>
         <file>image/cards/SunFlower.png</file>
         <file>image/plant/SunFlower.gif</file>
+        <file>image/plant/Potato.gif</file>
     </qresource>
 </RCC>
