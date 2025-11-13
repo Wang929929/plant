@@ -21,6 +21,7 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     void addPlant(QString s, QPointF pos);
     void addSun(int amount);
+    int getSun();
 
 private:
     // 辅助函数：根据点击的局部坐标返回卡片名称
