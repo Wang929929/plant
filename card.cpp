@@ -1,10 +1,10 @@
 #include "card.h"
 #include "shop.h"
 
-const QMap<QString, int> Card::index = {{"SunFlower", 0}, {"Peashooter", 1}};
-const QVector<QString> Card::name = {"SunFlower", "Peashooter"};
-const QVector<int> Card::cost = {50, 100};
-const QVector<int> Card::cool = {227, 227};
+const QMap<QString, int> Card::index = {{"SunFlower", 0}, {"Peashooter", 1}, {"Potato", 2}};
+const QVector<QString> Card::name = {"SunFlower", "Peashooter", "Potato"};
+const QVector<int> Card::cost = {50, 100, 150};
+const QVector<int> Card::cool = {227, 227, 227};
 
 Card::Card(QString s){
     text = s;
