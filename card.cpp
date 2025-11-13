@@ -51,8 +51,8 @@ void Card::mousePressEvent(QGraphicsSceneMouseEvent *event)
     Q_UNUSED(event)
     if (counter < cool[index[text]])
         event->setAccepted(false);
-    // 商店判断价格是否能购买
-    //……
+    if (shop->getSun() < cost[index[text]])
+        event->setAccepted(false);
     setCursor(Qt::ArrowCursor); //光标形状设置
 }
 
