@@ -3,6 +3,7 @@
 #include "card.h"
 #include "peashooter.h"
 #include "sunflower.h"
+#include "potato.h"
 
 #include <QPainter>
 #include <QGraphicsScene>
@@ -90,6 +91,8 @@ void Shop::addPlant(QString s, QPointF pos){
         plant = new SunFlower; break;
     case 1:
         plant = new Peashooter; break;
+    case 2:
+        plant = new Potato; break;
     }
 
     if (plant) {
