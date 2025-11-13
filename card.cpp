@@ -64,7 +64,7 @@ void Card::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
     QDrag *drag = new QDrag(event -> widget());
     QMimeData *mime = new QMimeData;
-    QImage image(":/image/cards" + text + ".png");
+    QImage image(":/image/cards/" + text + ".png");
     mime->setText(text);
     mime->setImageData(image);
     drag->setMimeData(mime);
