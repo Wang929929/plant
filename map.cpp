@@ -42,12 +42,12 @@ void Map::dropEvent(QGraphicsSceneDragDropEvent *event){
         pos.setX((int(pos.x()) - 249) / 82 * 82 + 290);
         pos.setY((int(pos.y()) - 81) / 98 * 98 + 130);
         if (s == "Shovel"){
-            Shovel *shovel = qgraphicsitem_cast<Shovel *>(scene()->items(QPointF(830, 15))[0]);
+            Shovel *shovel = qgraphicsitem_cast<Shovel *>(scene()->items(QPointF(825, 65))[0]);
             shovel->removePlant(pos);
         }
         else{
             //商店查找，具体坐标需要依据情况而定
-            Shop *shop = qgraphicsitem_cast<Shop *>(scene()->items(QPointF(825, 65))[0]);
+            Shop *shop = qgraphicsitem_cast<Shop *>(scene()->items(QPointF(300, 15))[0]);
             shop->addPlant(s, pos); //shop的植物添加方法
         }
     }
