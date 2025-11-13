@@ -121,4 +121,8 @@ void Shop::addSun(int amount){
     update(); // 重绘
 }
 
+int Shop::getSun(){
+    return m_sun;
+}
+
 
