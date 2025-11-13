@@ -15,6 +15,7 @@ SOURCES += \
     mainwindow.cpp \
     map.cpp \
     plant.cpp \
+    potato.cpp \
     shop.cpp \
     shovel.cpp\
     sun.cpp \
@@ -28,6 +29,7 @@ HEADERS += \
     map.h \
     peashooter.h \
     plant.h \
+    potato.h \
     shop.h \
     shovel.h \
     sun.h \
