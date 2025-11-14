@@ -51,6 +51,7 @@ void Card::mousePressEvent(QGraphicsSceneMouseEvent *event)
     Q_UNUSED(event)
     if (counter < cool[index[text]])
         event->setAccepted(false);
+    Shop *shop = qgraphicsitem_cast<Shop *>(scene()->items(QPointF(300, 15))[0]);
     if (shop->getSun() < cost[index[text]])
         event->setAccepted(false);
     setCursor(Qt::ArrowCursor); //光标形状设置
