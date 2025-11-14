@@ -39,7 +39,12 @@ private slots:
     void togglePause();     // 暂停/继续
     void checkGameState();  // 检查游戏状态
     void showVolumeMenu();  // 新增这行：显示音量菜单
+    void restartGame(); // 新增：重新开始游戏
     void spawnSun();        // 【谢嘉翔】新增这行：生成随机掉落的太阳
+
+// 新增：添加显示图片的函数
+private:
+    void showGameOverImage(bool isWin); //新增：显示游戏结束图片
 
 private:
     Ui::MainWindow *ui;
