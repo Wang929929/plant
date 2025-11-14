@@ -23,5 +23,6 @@
         <file>image/cards/SunFlower.png</file>
         <file>image/plant/SunFlower.gif</file>
         <file>image/plant/Potato.gif</file>
+        <file>image/zombie_eat_brain.png</file>
     </qresource>
 </RCC>
