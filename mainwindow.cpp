@@ -2,11 +2,14 @@
 #include "ui_mainwindow.h"
 #include "shop.h"
 #include "shovel.h"
+#include "zombies.h" //新增
+#include "audiomanager.h" //新增
 #include <QVector>
 #include <QRandomGenerator>
 #include <QPushButton>
 #include <QMessageBox>
 #include <QLabel>
+#include <QVBoxLayout> //新增垂直
 
 #include "sun.h"
 
@@ -103,15 +106,15 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(timer, &QTimer::timeout, scene, &QGraphicsScene::advance);
     // // 立即生成几个用于测试的僵尸（可删）!!!!!如果要测试就把下面的commend解除掉
-    // for (int i = 0; i < 3; ++i)
-    //     outZombies();
+    for (int i = 0; i < 3; ++i)
+        outZombies();
 
-    // // 自动生成僵尸计时器（每 5 秒生成一个）用来测试的，不用管这个
-    // QTimer *spawnTimer = new QTimer(this);
-    // connect(spawnTimer, &QTimer::timeout, this, [this]() {
-    //     outZombies();
-    // });
-    // spawnTimer->start(5000); // 每5秒生成一个新僵尸
+    // 自动生成僵尸计时器（每 5 秒生成一个）用来测试的，不用管这个
+    QTimer *spawnTimer = new QTimer(this);
+    connect(spawnTimer, &QTimer::timeout, this, [this]() {
+        outZombies();
+    });
+    spawnTimer->start(5000); // 每5秒生成一个新僵尸
 }
 
 void MainWindow::showBeginStandZombies()//开场动画，让我们种植物的时候僵尸出现的的
@@ -226,38 +229,165 @@ void MainWindow::togglePause()
 // 检查游戏状态
 void MainWindow::checkGameState()
 {
-    // 这里需要与负责Zombie模块的组员协作
-    // 你需要从他们那里获取这些信息：
+    if (gameOver) return; // 已经结束就不再判断
 
-    // 伪代码 - 你需要根据实际实现修改：
-    bool zombieReachedLeft = false;   // 是否有僵尸到达最左侧
-    bool allZombiesDefeated = false;  // 是否所有僵尸都被消灭
+    bool zombieReachedLeft = false;
+    bool allZombiesDefeated = true;  // 假设全部死亡，若发现活的就设为 false
 
-    // 示例：你需要这样获取数据（具体方法要和组员商量）：
-    // zombieReachedLeft = zombieManager->hasZombieReachedLeft();
-    // allZombiesDefeated = (zombieManager->getAliveZombieCount() == 0);
+    for (Zombies *zombie : zombiesVector)
+    {
+        if (!zombie) continue;
 
-    // 检查失败条件
-    if (zombieReachedLeft && !gameOver) {
-        gameOver = true;
-        gameStateTimer->stop();
-        timer->stop();
-        sunSpawnTimer->stop();  //【谢嘉翔】暂停太阳生成
+        // 使用新的 isAlive() 方法
+        if (zombie->isAlive())
+        {
+            allZombiesDefeated = false;
 
-        QMessageBox::information(this, "游戏结束", "僵尸吃掉了你的脑子！游戏失败！");
-        qDebug() << "游戏失败：僵尸到达左侧";
-
+            // 如果僵尸活着且到达最左边界，判定为失败
+            if (zombie->x() <= 150)
+            {
+                zombieReachedLeft = true;
+                break;
+            }
+        }
     }
-    // 检查胜利条件
-    else if (allZombiesDefeated && !gameOver) {
+
+    // 游戏失败条件
+    if (zombieReachedLeft)
+    {
         gameOver = true;
         gameStateTimer->stop();
         timer->stop();
-        sunSpawnTimer->stop();  //【谢嘉翔】暂停太阳生成
+
+        // 新增：移除原来的弹窗，改用图片显示
+        // QMessageBox::information(this, "游戏结束", "僵尸吃掉了你的脑子！");
+
+        // 新增：用图片显示
+        showGameOverImage(false); //false表示失败
+
+        qDebug() << "游戏失败：僵尸到达左侧";
+    }
+
+    // 游戏胜利条件
+    else if (allZombiesDefeated && ZombiesNum > 0)  // 防止刚开始没僵尸就胜利
+    {
+        gameOver = true;
+        gameStateTimer->stop();
+        timer->stop();
+
+        // 播放胜利音效
+        if (audioManager) {
+            audioManager->playVictorySound();
+        }
 
         QMessageBox::information(this, "游戏胜利", "恭喜你击败了所有僵尸！");
         qDebug() << "游戏胜利：所有僵尸被消灭";
     }
+}
+
+// 新增：游戏结束时，显示“僵尸吃掉了你的脑子”图片
+void MainWindow::showGameOverImage(bool isWin)
+{
+    // 创建覆盖全屏的半透明层
+    QWidget *overlay = new QWidget(this);  // 修正：QWidget *overlay
+    overlay->setGeometry(this->rect());
+    overlay->setStyleSheet("background-color: rgba(0, 0, 0, 150);"); // 半透明黑色背景
+
+    // 创建图片标签
+    QLabel *imageLabel = new QLabel(overlay);  // 修正：QLabel *imageLabel
+    imageLabel->setAlignment(Qt::AlignCenter);
+
+    if (isWin) {  // 修正：isWin（不是!swfin）
+        // 胜利图片（如果你有的话）
+        QPixmap winPixmap(":/image/game_win.png");  // 修正：QPixmap winPixmap
+        imageLabel->setPixmap(winPixmap.scaled(400, 300, Qt::KeepAspectRatio, Qt::SmoothTransformation));  // 修正：400, 300
+    } else {
+        // 失败图片 - "僵尸吃掉了你的脑子"
+        QPixmap losePixmap(":/image/zombie_eat_brain.png"); // 修正：QPixmap losePixmap
+        if (losePixmap.isNull()) {  // 修正：losePixmap.isNull()
+            qDebug() << "失败图片未找到，请检查路径";
+            // 备用方案：显示文字
+            imageLabel->setText("💀 僵尸吃掉了你的脑子！ 💀");  // 修正：正确的文字
+            imageLabel->setStyleSheet("QLabel { color: red; font-size: 36px; font-weight: bold; background: transparent; }");
+        } else {
+            imageLabel->setPixmap(losePixmap.scaled(400, 300, Qt::KeepAspectRatio, Qt::SmoothTransformation));  // 修正：400, 300
+        }
+    }
+
+    // 创建重新开始按钮
+    QPushButton *restartButton = new QPushButton("重新开始", overlay);  // 修正：QPushButton *restartButton
+    restartButton->setStyleSheet("QPushButton { font-size: 20px; padding: 10px 20px; background-color: #4CAF50; color: white; border-radius: 5px; }");
+    restartButton->setFixedSize(120, 50);
+
+    // 布局
+    QVBoxLayout *layout = new QVBoxLayout(overlay);  // 修正：QVBoxLayout *layout
+    layout->addWidget(imageLabel, 0, Qt::AlignCenter);  // 修正：imageLabel
+    layout->addWidget(restartButton, 0, Qt::AlignCenter);
+    layout->setAlignment(Qt::AlignCenter);
+
+    overlay->setLayout(layout);
+    overlay->show();
+
+    // 连接重新开始按钮（这个要在函数内部）
+    connect(restartButton, &QPushButton::clicked, this, [this, overlay]() {
+        overlay->deleteLater(); //删除覆盖层
+        // 新增：重新开始游戏的按钮
+        restartGame();
+        qDebug() << "重新开始游戏";
+    });
+}
+
+// 新增：重新开始游戏的函数
+void MainWindow::restartGame()
+{
+    qDebug() << "=== 重新开始游戏 ===";
+
+    // 重置状态变量
+    gameOver = false;
+    isPaused = false;
+    isMuted = false;
+
+    // 重置UI
+    muteButton->setText("Mute");
+    muteButton->setStyleSheet("QPushButton { background-color: lightblue; }");
+    pauseButton->setText("Pause");
+    pauseButton->setStyleSheet("QPushButton { background-color: lightgreen; }");
+
+    // 停止定时器
+    gameStateTimer->stop();
+    timer->stop();
+
+    // 清理所有僵尸
+    for (Zombies *zombie : zombiesVector) {
+        if (zombie) {
+            scene->removeItem(zombie);
+            delete zombie;
+        }
+    }
+    zombiesVector.clear();
+    MainWindow::ZombiesNum = 0;
+
+    // 清理所有太阳（新增）
+    QList<QGraphicsItem*> allItems = scene->items();
+    for (QGraphicsItem* item : allItems) {
+        Sun* sun = dynamic_cast<Sun*>(item);
+        if (sun) {
+            scene->removeItem(item);
+            delete item;
+        }
+    }
+
+    // 重新开始游戏循环
+    gameStateTimer->start(100);
+    timer->start(33);
+
+    // 重置音频
+    if (audioManager) {
+        audioManager->setVolume(50);
+        audioManager->playBackgroundMusic();
+    }
+
+    qDebug() << "游戏重启完成，清理了太阳";
 }
 
 // 新增：显示音量菜单
