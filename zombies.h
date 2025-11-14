@@ -21,10 +21,14 @@ public:
     QRectF boundingRect() const override;
     void advance(int phase) override;
 
+//新增：确保变成公共方法
+public:
+    bool isAlive()const{return !isDead && healthPoints > 0;}
+
     // 僵尸行为接口
     void doEating();     // 开始吃植物
     void eatOver();      // 停止吃植物
-    void lessHealth();   // 受到伤害
+    void lessHealth(double damage);   // 受到伤害
     void dead();         // 死亡逻辑
 
 
