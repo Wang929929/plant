@@ -11,9 +11,11 @@ CONFIG += c++17
 SOURCES += \
     audiomanager.cpp \
     card.cpp \
+    fire.cpp \
     main.cpp \
     mainwindow.cpp \
     map.cpp \
+    pepper.cpp \
     plant.cpp \
     potato.cpp \
     shop.cpp \
@@ -25,9 +27,11 @@ SOURCES += \
 HEADERS += \
     audiomanager.h \
     card.h \
+    fire.h \
     mainwindow.h \
     map.h \
     peashooter.h \
+    pepper.h \
     plant.h \
     potato.h \
     shop.h \
