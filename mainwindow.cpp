@@ -55,10 +55,10 @@ MainWindow::MainWindow(QWidget *parent)
     sunSpawnTimer = new QTimer(this);
     connect(sunSpawnTimer, &QTimer::timeout, this, &MainWindow::spawnSun);
     sunSpawnTimer->start(10000); // 每 10 秒掉落一个
-    // timer -> start(33);
-    // view->show();
-    // this->showBeginStandZombies();
-    // connect(timer, &QTimer::timeout, scene, &QGraphicsScene::advance); 这一段和后面重复了，会导致僵尸速度变快
+    timer -> start(33);
+    view->show();
+    this->showBeginStandZombies();
+    connect(timer, &QTimer::timeout, scene, &QGraphicsScene::advance);
 
     //创建按钮
     muteButton = new QPushButton("Mute", this);
@@ -105,16 +105,16 @@ MainWindow::MainWindow(QWidget *parent)
     this->showBeginStandZombies();
 
     connect(timer, &QTimer::timeout, scene, &QGraphicsScene::advance);
-    // // 立即生成几个用于测试的僵尸（可删）!!!!!如果要测试就把下面的commend解除掉，这个只是测试的！！
-    // for (int i = 0; i < 3; ++i)
-    //     outZombies();
+    // // 立即生成几个用于测试的僵尸（可删）!!!!!如果要测试就把下面的commend解除掉
+    for (int i = 0; i < 3; ++i)
+        outZombies();
 
-    // // 自动生成僵尸计时器（每 5 秒生成一个）用来测试的，不用管这个
-    // QTimer *spawnTimer = new QTimer(this);
-    // connect(spawnTimer, &QTimer::timeout, this, [this]() {
-    //     outZombies();
-    // });
-    // spawnTimer->start(5000); // 每5秒生成一个新僵尸
+    // 自动生成僵尸计时器（每 5 秒生成一个）用来测试的，不用管这个
+    QTimer *spawnTimer = new QTimer(this);
+    connect(spawnTimer, &QTimer::timeout, this, [this]() {
+        outZombies();
+    });
+    spawnTimer->start(5000); // 每5秒生成一个新僵尸
 }
 
 void MainWindow::showBeginStandZombies()//开场动画，让我们种植物的时候僵尸出现的的
@@ -134,7 +134,7 @@ void MainWindow::showBeginStandZombies()//开场动画，让我们种植物的�
     qDebug() << "Initialized" << zombiesVector.size() << "stand zombies.";
 }
 
-void MainWindow::deleteBeginZombie()//正式开始的时候调用这个，删掉开场僵尸！！！！！就是一个按钮，然后激发先这个，再来outzombies
+void MainWindow::deleteBeginZombie()//正式开始的时候调用这个，删掉开场僵尸
 {
     for (QVector<Zombies *>::iterator it = this->zombiesVector.begin();
          it != this->zombiesVector.end();
@@ -153,7 +153,7 @@ void MainWindow::outZombies()//僵尸随机出现，游戏开始
         return;
 
     // 以概率生成，降低出现频率
-    if (QRandomGenerator::global()->bounded(100) < 20) // 20% 概率不生成
+    if (QRandomGenerator::global()->bounded(100) < 20) // 50% 概率不生成
         return;
 
     // 随机生成普通僵尸或铁桶僵尸
@@ -377,6 +377,17 @@ void MainWindow::restartGame()
         }
     }
 
+    // 新增：清理所有植物
+    QList<QGraphicsItem*> sceneItems = scene->items();
+    for (QGraphicsItem* item : sceneItems) {
+        Plant* plant = dynamic_cast<Plant*>(item);
+        if (plant) {
+            scene->removeItem(item);
+            delete item;
+            qDebug() << "删除植物";
+        }
+    }
+
     // 重新开始游戏循环
     gameStateTimer->start(100);
     timer->start(33);
@@ -387,7 +398,7 @@ void MainWindow::restartGame()
         audioManager->playBackgroundMusic();
     }
 
-    qDebug() << "游戏重启完成，清理了太阳";
+    qDebug() << "游戏已重置，清理了僵尸、太阳和植物，等待玩家点击开始按钮";
 }
 
 // 新增：显示音量菜单
