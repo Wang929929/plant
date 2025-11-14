@@ -97,8 +97,8 @@ void Zombies::eatOver()
 
 void Zombies::lessHealth(double damage)
 {
-    healthPoints -= damage;
-    if (healthPoints <= 0)
+    health -= damage;
+    if (health <= 0)
         dead();
 }
 
