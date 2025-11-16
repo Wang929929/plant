@@ -55,11 +55,6 @@ MainWindow::MainWindow(QWidget *parent)
     sunSpawnTimer = new QTimer(this);
     connect(sunSpawnTimer, &QTimer::timeout, this, &MainWindow::spawnSun);
     sunSpawnTimer->start(10000); // 每 10 秒掉落一个
-    timer -> start(33);
-    view->show();
-    //开场僵尸
-    //this->showBeginStandZombies();
-    connect(timer, &QTimer::timeout, scene, &QGraphicsScene::advance);
 
     //创建按钮
     muteButton = new QPushButton("Mute", this);
