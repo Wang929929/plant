@@ -91,7 +91,7 @@ void Shop::addPlant(QString s, QPointF pos){
     case 0:
         plant = new SunFlower; break;
     case 1:
-        plant = new Peashooter; break;
+        plant = new PeaShooter; break;
     case 2:
         plant = new Potato; break;
     case 3:
