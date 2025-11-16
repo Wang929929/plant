@@ -12,6 +12,7 @@ public:
     Pepper();
     void advance(int phase) override;
     void explode();
+    bool collidesWithItem(const QGraphicsItem *other, Qt::ItemSelectionMode mode) const override;
 
 private:
     bool m_readyToDelete;
