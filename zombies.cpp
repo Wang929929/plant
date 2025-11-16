@@ -182,7 +182,7 @@ void Zombies::updateAnimation()
         if (m_name == "bucketZombie"){
 
             if (newState == "die")
-                setMovie(":/image/zombie/zombie_die/ZombieDie.gif");
+                setMovie(":/image/zombie_die/ZombieDie.gif");
             else if (newState == "eat")
                 setMovie(":/image/zombie_eat/BucketZombieAttack.gif");
             else
@@ -190,7 +190,7 @@ void Zombies::updateAnimation()
         if (m_name == "ConeZombie"){
 
             if (newState == "die")
-                setMovie(":/image/zombie/zombie_die/ZombieDie.gif");
+                setMovie(":/image/zombie_die/ZombieDie.gif");
             else if (newState == "eat")
                 setMovie(":/image/zombie_eat/ConeZombieAttack.gif");
             else
@@ -198,7 +198,7 @@ void Zombies::updateAnimation()
         if (m_name == "footballZombie"){
 
             if (newState == "die")
-                setMovie(":/image/zombie/zombie_die/FootballZombieDie.gif");
+                setMovie(":/image/zombie_die/FootballZombieDie.gif");
             else if (newState == "eat")
                 setMovie(":/image/zombie_eat/FootballZombieAttack.gif");
             else
