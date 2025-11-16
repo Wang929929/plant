@@ -29,8 +29,7 @@ Zombies::Zombies(QString name, bool isStand, QGraphicsScene *scene, QObject *par
 }
 Zombies::~Zombies()
 {
-    if (isStand)
-        MainWindow::ZombiesNum--;
+    MainWindow::ZombiesNum--;
     if (movie)
         delete movie;
 }
@@ -107,6 +106,7 @@ void Zombies::dead()
     if (!isDead) {
         isDead = true;
         isEating = false;
+        emit zombieDied(this); // 发射僵尸死亡信号
         QTimer::singleShot(5000, this, [=]() { delete this; }); // 延迟删除
     }
 }
@@ -172,12 +172,12 @@ void Zombies::updateAnimation()
     {
         currentState = newState;
         if (m_name == "normalZombie"){
-        if (newState == "die")
-            setMovie(":/image/zombie/zombie_die/ZombieDie.gif");
-        else if (newState == "eat")
-            setMovie(":/image/zombie_eat/ZombieAttack.gif");
-        else
-            setMovie(":/image/zombie/ZombieWalk2.gif");}
+            if (newState == "die")
+                setMovie(":/image/zombie/zombie_die/ZombieDie.gif");
+            else if (newState == "eat")
+                setMovie(":/image/zombie_eat/ZombieAttack.gif");
+            else
+                setMovie(":/image/zombie/ZombieWalk2.gif");}
 
         if (m_name == "bucketZombie"){
 
@@ -187,21 +187,21 @@ void Zombies::updateAnimation()
                 setMovie(":/image/zombie_eat/BucketZombieAttack.gif");
             else
                 setMovie(":/image/zombie/BucketZombieWalk.gif");}
-    if (m_name == "ConeZombie"){
+        if (m_name == "ConeZombie"){
 
-        if (newState == "die")
-            setMovie(":/image/zombie/zombie_die/ZombieDie.gif");
-        else if (newState == "eat")
-            setMovie(":/image/zombie_eat/ConeZombieAttack.gif");
-        else
-            setMovie(":/image/zombie/ConeZombieWalk.gif");}
-    if (m_name == "footballZombie"){
+            if (newState == "die")
+                setMovie(":/image/zombie/zombie_die/ZombieDie.gif");
+            else if (newState == "eat")
+                setMovie(":/image/zombie_eat/ConeZombieAttack.gif");
+            else
+                setMovie(":/image/zombie/ConeZombieWalk.gif");}
+        if (m_name == "footballZombie"){
 
-        if (newState == "die")
-            setMovie(":/image/zombie/zombie_die/FootballZombieDie.gif");
-        else if (newState == "eat")
-            setMovie(":/image/zombie_eat/FootballZombieAttack.gif");
-        else
-            setMovie(":/image/zombie/FootballZombieWalk.gif");}
-}
+            if (newState == "die")
+                setMovie(":/image/zombie/zombie_die/FootballZombieDie.gif");
+            else if (newState == "eat")
+                setMovie(":/image/zombie_eat/FootballZombieAttack.gif");
+            else
+                setMovie(":/image/zombie/FootballZombieWalk.gif");}
+    }
 }
