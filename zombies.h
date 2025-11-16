@@ -21,7 +21,7 @@ public:
     QRectF boundingRect() const override;
     void advance(int phase) override;
 
-//新增：确保变成公共方法
+    //新增：确保变成公共方法
 public:
     bool isAlive()const{return !isDead && healthPoints > 0;}
 
@@ -54,7 +54,7 @@ private:
     QString currentState = ""; // 当前动画状态（walk / eat / die）
 
 signals:
-
+    void zombieDied(Zombies *zombie);
 };
 
 #endif // ZOMBIES_H
