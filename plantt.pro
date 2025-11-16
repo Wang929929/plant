@@ -15,6 +15,8 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     map.cpp \
+    pea.cpp \
+    peashooter.cpp \
     pepper.cpp \
     plant.cpp \
     potato.cpp \
@@ -30,6 +32,7 @@ HEADERS += \
     fire.h \
     mainwindow.h \
     map.h \
+    pea.h \
     peashooter.h \
     pepper.h \
     plant.h \
