@@ -57,7 +57,8 @@ MainWindow::MainWindow(QWidget *parent)
     sunSpawnTimer->start(10000); // 每 10 秒掉落一个
     timer -> start(33);
     view->show();
-    this->showBeginStandZombies();
+    //开场僵尸
+    //this->showBeginStandZombies();
     connect(timer, &QTimer::timeout, scene, &QGraphicsScene::advance);
 
     //创建按钮
@@ -102,12 +103,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     timer -> start(33);
     view->show();
-    this->showBeginStandZombies();
+    //this->showBeginStandZombies();
 
     connect(timer, &QTimer::timeout, scene, &QGraphicsScene::advance);
     // // 立即生成几个用于测试的僵尸（可删）!!!!!如果要测试就把下面的commend解除掉
-    for (int i = 0; i < 3; ++i)
-        outZombies();
+    //for (int i = 0; i < 3; ++i)
+    //outZombies();
 
     // 自动生成僵尸计时器（每 5 秒生成一个）用来测试的，不用管这个
     QTimer *spawnTimer = new QTimer(this);
@@ -127,6 +128,7 @@ void MainWindow::showBeginStandZombies()//开场动画，让我们种植物的�
     for (const QPointF &pos : zombiePositions)
     {
         Zombies *zombie = new Zombies("normalZombie", true, scene, this);
+        connect(zombie, &Zombies::zombieDied, this, &MainWindow::handleZombieDied);
         zombie->setPos(pos);
         zombiesVector.append(zombie);
     }
@@ -171,6 +173,7 @@ void MainWindow::outZombies()//僵尸随机出现，游戏开始
     // 生成随机行走僵尸
     int randomY = QRandomGenerator::global()->bounded(5) * 100 + 20;
     Zombies *zombie = new Zombies(type, false, scene, this);
+    connect(zombie, &Zombies::zombieDied, this, &MainWindow::handleZombieDied);
     zombie->setPos(900, randomY);
     zombiesVector.append(zombie);
 
@@ -229,14 +232,20 @@ void MainWindow::togglePause()
 // 检查游戏状态
 void MainWindow::checkGameState()
 {
+    ++count;
     if (gameOver) return; // 已经结束就不再判断
 
     bool zombieReachedLeft = false;
-    bool allZombiesDefeated = true;  // 假设全部死亡，若发现活的就设为 false
+    bool allZombiesDefeated = count >= 300? true : false;  // 假设全部死亡，若发现活的就设为 false
 
-    for (Zombies *zombie : zombiesVector)
+    // 清理无效指针并检查僵尸状态
+    for (int i = zombiesVector.size() - 1; i >= 0; --i)
     {
-        if (!zombie) continue;
+        Zombies *zombie = zombiesVector[i];
+        if (!zombie) {
+            zombiesVector.remove(i);
+            continue;
+        }
 
         // 使用新的 isAlive() 方法
         if (zombie->isAlive())
@@ -269,7 +278,7 @@ void MainWindow::checkGameState()
     }
 
     // 游戏胜利条件
-    else if (allZombiesDefeated && ZombiesNum > 0)  // 防止刚开始没僵尸就胜利
+    else if (allZombiesDefeated && ZombiesNum > 0 && zombiesVector.isEmpty())  // 防止刚开始没僵尸就胜利且确保vector中没有僵尸
     {
         gameOver = true;
         gameStateTimer->stop();
@@ -447,6 +456,16 @@ void MainWindow::spawnSun(){
 
     Sun *sun = new Sun();
     scene->addItem(sun);
+}
+
+// 处理僵尸死亡信号
+void MainWindow::handleZombieDied(Zombies *zombie){
+    // 从zombiesVector中移除僵尸
+    int index = zombiesVector.indexOf(zombie);
+    if (index != -1) {
+        zombiesVector.remove(index);
+        qDebug() << "Removed zombie from vector. Total zombies:" << zombiesVector.size();
+    }
 }
 
 MainWindow::~MainWindow()
