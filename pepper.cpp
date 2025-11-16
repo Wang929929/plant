@@ -9,6 +9,16 @@ Pepper::Pepper() {
     m_readyToDelete = false;
 }
 
+bool Pepper::collidesWithItem(const QGraphicsItem *other, Qt::ItemSelectionMode mode) const
+{
+    Q_UNUSED(mode)
+    QPointF pepperPos = pos();
+    int row = (int(pepperPos.y()) - 81) / 98;
+    QPointF zombiePos = other->pos();
+    int zombieRow = (int(zombiePos.y()) - 20) / 100;
+    return state && other->type() == Zombies::Type && zombieRow == row;
+}
+
 void Pepper::advance(int phase) {
     if (!phase) return;
     if (m_readyToDelete) {
@@ -33,7 +43,7 @@ void Pepper::explode() {
 
     QPointF pepperPos = pos();
     int row = (int(pepperPos.y()) - 81) / 98;
-    int pepperCol = (int(pepperPos.x()) - 290) / 82;
+    int pepperCol = (int(pepperPos.x()) - 249) / 82;
 
     if (!scene()) {
         qDebug() << "Pepper: No scene available for explosion";
@@ -43,7 +53,7 @@ void Pepper::explode() {
     for (int i = 0; i < 9; i++) {
         FireItem* fire = new FireItem();
 
-        int fireX = pepperPos.x() + (i - pepperCol) * 82;  // 从辣椒位置开始
+        int fireX = 208 + i * 82;
         int fireY = pepperPos.y() - 98;
 
         fire->setPos(fireX, fireY);
@@ -54,20 +64,11 @@ void Pepper::explode() {
         // 不需要再存储火焰，因为火焰会自己删除
     }
 
-    // 消灭同一行的僵尸
-    QList<QGraphicsItem*> items = scene()->items();
-    for (QGraphicsItem* item : items) {
-        if (!item || !item->scene()) {
-            continue;
-        }
-        Zombies* zombie = dynamic_cast<Zombies*>(item);
-        if (zombie) {
-            QPointF zombiePos = zombie->pos();
-            int zombieRow = (int(zombiePos.y()) - 20) / 100;
-            if (zombieRow == row) {
-                zombie->dead();
-            }
-        }
+    QList<QGraphicsItem *> items = collidingItems();
+    foreach (QGraphicsItem *item, items)
+    {
+        Zombies *zombie = qgraphicsitem_cast<Zombies *>(item);
+        zombie->dead();
     }
 
     // 僵尸已被杀死，设置为可以删除
