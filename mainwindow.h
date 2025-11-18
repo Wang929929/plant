@@ -45,10 +45,7 @@ private slots:
 
     // 新增：添加显示图片的函数
 private:
-    int count = 0;
     void showGameOverImage(bool isWin); //新增：显示游戏结束图片
-
-private:
     Ui::MainWindow *ui;
     QTimer *timer;
     QGraphicsScene *scene;
@@ -68,5 +65,6 @@ private:
     bool isMuted;
     bool isPaused;
     bool gameOver;
+    int timeCount = 0;
 };
 #endif // MAINWINDOW_H
