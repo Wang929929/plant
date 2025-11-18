@@ -227,11 +227,11 @@ void MainWindow::togglePause()
 // 检查游戏状态
 void MainWindow::checkGameState()
 {
-    ++count;
+    ++timeCount;
     if (gameOver) return; // 已经结束就不再判断
 
     bool zombieReachedLeft = false;
-    bool allZombiesDefeated = count >= 300? true : false;  // 假设全部死亡，若发现活的就设为 false
+    bool allZombiesDefeated = timeCount >= 300? true : false;  // 假设全部死亡，若发现活的就设为 false
 
     // 清理无效指针并检查僵尸状态
     for (int i = zombiesVector.size() - 1; i >= 0; --i)
