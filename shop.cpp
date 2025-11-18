@@ -127,6 +127,14 @@ void Shop::addSun(int amount){
     update(); // 重绘
 }
 
+// 新增：重置太阳数
+void Shop::resetSun(int amount)
+{
+    m_sun = amount;
+    update();  // 重绘显示新的太阳数
+    qDebug() << "商店太阳数重置为:" << m_sun;
+}
+
 int Shop::getSun(){
     return m_sun;
 }
