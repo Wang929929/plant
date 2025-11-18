@@ -8,12 +8,12 @@
         <file>image/footballZombie/footballZombieAttack.gif</file>
         <file>image/footballZombie/footballZombieDie.gif</file>
         <file>image/footballZombie/footballZombieWalk.gif</file>
-        <file>image/bucketzombie/bucketZombieWalk.gif</file>
-        <file>image/bucketzombie/bucketZombieAttack.gif</file>
-        <file>image/bucketzombie/bucketZombieDie.gif</file>
-        <file>image/Conezombie/ConeZombieWalk.gif</file>
-        <file>image/Conezombie/ConeZombieDie.gif</file>
-        <file>image/Conezombie/ConeZombieAttack.gif</file>
+        <file>image/bucketZombie/bucketZombieWalk.gif</file>
+        <file>image/bucketZombie/bucketZombieAttack.gif</file>
+        <file>image/bucketZombie/bucketZombieDie.gif</file>
+        <file>image/ConeZombie/ConeZombieWalk.gif</file>
+        <file>image/ConeZombie/ConeZombieDie.gif</file>
+        <file>image/ConeZombie/ConeZombieAttack.gif</file>
         <file>sounds/background_music.MP3</file>
         <file>sounds/victory.wav</file>
         <file>image/shop/Shop.png</file>
