@@ -48,6 +48,7 @@ private:
     bool isEating = false;
     bool isLeft = false;
     bool touchingPlant;
+    bool readyToDelete = false;
 
     int healthPoints = 10;
     QMovie *movie = nullptr;
