@@ -13,6 +13,15 @@ PeaShooter::PeaShooter()
     // qDebug() << "Peashooter created (default constructor)!";
 }
 
+bool PeaShooter::collidesWithItem(const QGraphicsItem *other, Qt::ItemSelectionMode mode) const{
+    Q_UNUSED(mode)
+    QPointF peashooterPos = pos();
+    int row = (int(peashooterPos.y()) - 81) / 98;
+    QPointF zombiePos = other->pos();
+    int zombieRow = (int(zombiePos.y()) - 20) / 100;
+    return other->type() == Zombies::Type && zombieRow == row;
+}
+
 PeaShooter::PeaShooter(QGraphicsScene *scene, QGraphicsItem *parent)
     : Plant(), shootInterval(2000), gameScene(scene)
 {
@@ -72,3 +81,4 @@ void PeaShooter::shoot()
     gameScene->addItem(pea);
     // qDebug() << "Peashooter successfully shot a pea!";
 }
+
