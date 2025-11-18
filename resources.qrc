@@ -2,16 +2,18 @@
     <qresource prefix="/">
         <file>image/Background.jpg</file>
         <file>image/Sun.gif</file>
-        <file>image/zombie_die/ZombieDie.gif</file>
-        <file>image/zombie_eat/ZombieAttack.gif</file>
-        <file>image/zombie/ZombieWalk2.gif</file>
-        <file>image/zombie_eat/BucketZombieAttack.gif</file>
-        <file>image/zombie/BucketZombieWalk.gif</file>
-        <file>image/zombie_eat/ConeZombieAttack.gif</file>
-        <file>image/zombie/ConeZombieWalk.gif</file>
-        <file>image/zombie_die/FootballZombieDie.gif</file>
-        <file>image/zombie_eat/FootballZombieAttack.gif</file>
-        <file>image/zombie/FootballZombieWalk.gif</file>
+        <file>image/normalZombie/normalZombieDie.gif</file>
+        <file>image/normalZombie/normalZombieAttack.gif</file>
+        <file>image/normalZombie/normalZombieWalk.gif</file>
+        <file>image/footballZombie/footballZombieAttack.gif</file>
+        <file>image/footballZombie/footballZombieDie.gif</file>
+        <file>image/footballZombie/footballZombieWalk.gif</file>
+        <file>image/bucketzombie/bucketZombieWalk.gif</file>
+        <file>image/bucketzombie/bucketZombieAttack.gif</file>
+        <file>image/bucketzombie/bucketZombieDie.gif</file>
+        <file>image/Conezombie/ConeZombieWalk.gif</file>
+        <file>image/Conezombie/ConeZombieWalkDie.gif</file>
+        <file>image/Conezombie/ConeZombieWalkAttack.gif</file>
         <file>sounds/background_music.MP3</file>
         <file>sounds/victory.wav</file>
         <file>image/shop/Shop.png</file>
