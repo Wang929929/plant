@@ -15,17 +15,16 @@ Zombies::Zombies(QString name, bool isStand, QGraphicsScene *scene, QObject *par
     scene->addItem(this);
 
     initZombieStats();
+    bool readyToDelete = false;
 
-    // 默认行走动画
-    if (m_name == "bucketZombie")
-        setMovie(":/image/zombie/BucketZombieWalk.gif");
-    if (m_name == "normalZombie")
-        setMovie(":/image/zombie/ZombieWalk2.gif");
-    if (m_name == "ConeZombie")
-        setMovie(":/image/zombie/ConeZombieWalk.gif");
-    if (m_name == "footballZombie")
-        setMovie(":/image/zombie/FootballZombieWalk.gif");
-    currentState = "walk";
+    // 默认行走动画（使用统一的路径拼接规则）
+    QString fileName = m_name + "Walk.gif";
+    QString path = QString(":/image/%1/%2").arg(m_name).arg(fileName);
+
+    setMovie(path);
+
+    // 设置初始状态
+    currentState = "Walk";
 }
 Zombies::~Zombies()
 {
@@ -53,7 +52,7 @@ void Zombies::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget
 
 QRectF Zombies::boundingRect() const
 {
-    if (m_name == "coneZombie") {
+    if (m_name == "ConeZombie") {
 
         return QRectF(90, 60, 40, 80);
     }
@@ -69,8 +68,8 @@ QRectF Zombies::boundingRect() const
 void Zombies::setMovie(const QString &path)
 {
     if (movie) {
-        movie->stop();
-        movie->deleteLater();
+        delete movie;
+        movie = nullptr;
     }
 
     movie = new QMovie(path);
@@ -101,13 +100,16 @@ void Zombies::lessHealth(double damage)
         dead();
 }
 
+
 void Zombies::dead()
 {
     if (!isDead) {
         isDead = true;
         isEating = false;
         emit zombieDied(this); // 发射僵尸死亡信号
-        QTimer::singleShot(5000, this, [=]() { delete this; }); // 延迟删除
+
+        // 切换到死亡动画（你的 updateAnimation 会自动处理）
+        updateAnimation();
     }
 }
 
@@ -116,6 +118,18 @@ void Zombies::dead()
    =========================== */
 void Zombies::advance(int phase)
 {
+    if (readyToDelete) {
+        if (scene()) scene()->removeItem(this);
+        delete this;
+        return;
+    }
+
+    if (isDead) {
+        if (movie && movie->currentFrameNumber() == movie->frameCount() - 1) {
+            readyToDelete = true;
+        }
+        return;
+    }
     if (!phase)
         return;
 
@@ -160,48 +174,26 @@ void Zombies::advance(int phase)
 
 void Zombies::updateAnimation()
 {
+    // 状态统一成首字母大写：Walk / Attack / Die
     QString newState;
     if (isDead)
-        newState = "die";
+        newState = "Die";
     else if (isEating)
-        newState = "eat";
+        newState = "Attack";
     else
-        newState = "walk";
+        newState = "Walk";
 
-    if (newState != currentState)
-    {
-        currentState = newState;
-        if (m_name == "normalZombie"){
-            if (newState == "die")
-                setMovie(":/image/zombie/zombie_die/ZombieDie.gif");
-            else if (newState == "eat")
-                setMovie(":/image/zombie_eat/ZombieAttack.gif");
-            else
-                setMovie(":/image/zombie/ZombieWalk2.gif");}
+    if (newState == currentState)
+        return;
 
-        if (m_name == "bucketZombie"){
+    currentState = newState;
 
-            if (newState == "die")
-                setMovie(":/image/zombie_die/ZombieDie.gif");
-            else if (newState == "eat")
-                setMovie(":/image/zombie_eat/BucketZombieAttack.gif");
-            else
-                setMovie(":/image/zombie/BucketZombieWalk.gif");}
-        if (m_name == "ConeZombie"){
 
-            if (newState == "die")
-                setMovie(":/image/zombie_die/ZombieDie.gif");
-            else if (newState == "eat")
-                setMovie(":/image/zombie_eat/ConeZombieAttack.gif");
-            else
-                setMovie(":/image/zombie/ConeZombieWalk.gif");}
-        if (m_name == "footballZombie"){
+    QString fileName = m_name + newState + ".gif";
 
-            if (newState == "die")
-                setMovie(":/image/zombie_die/FootballZombieDie.gif");
-            else if (newState == "eat")
-                setMovie(":/image/zombie_eat/FootballZombieAttack.gif");
-            else
-                setMovie(":/image/zombie/FootballZombieWalk.gif");}
-    }
+    QString path = QString(":/image/%1/%2")
+                       .arg(m_name)
+                       .arg(fileName);
+
+    setMovie(path);
 }
