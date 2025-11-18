@@ -47,10 +47,11 @@ void PeaShooter::advance(int phase)
 
     //射击逻辑
     QTime currentTime = QTime::currentTime();
-
-    if(lastShootTime.msecsTo(currentTime) >= shootInterval) {
-        shoot();
-        lastShootTime = currentTime;
+    if (!collidingItems().isEmpty()){
+        if(lastShootTime.msecsTo(currentTime) >= shootInterval) {
+            shoot();
+            lastShootTime = currentTime;
+        }
     }
 }
 
@@ -82,5 +83,6 @@ void PeaShooter::shoot()
     gameScene->addItem(pea);
     // qDebug() << "Peashooter successfully shot a pea!";
 }
+
 
 
