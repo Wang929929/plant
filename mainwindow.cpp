@@ -381,6 +381,17 @@ void MainWindow::restartGame()
         }
     }
 
+    // 新增：重置商店太阳数
+    QList<QGraphicsItem*> items = scene->items();
+    for (QGraphicsItem* item : items) {
+        Shop* foundShop = dynamic_cast<Shop*>(item);
+        if (foundShop) {
+            foundShop->resetSun(200);  // 重置为初始200太阳
+            qDebug() << "商店太阳数已重置";
+            break;
+        }
+    }
+
     // 新增：清理所有植物
     QList<QGraphicsItem*> sceneItems = scene->items();
     for (QGraphicsItem* item : sceneItems) {
