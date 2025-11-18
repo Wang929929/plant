@@ -1,5 +1,6 @@
 #include "peashooter.h"
 #include "pea.h"
+#include "zombies.h"
 #include <QGraphicsScene>
 #include <QList>
 #include <QDebug>
@@ -81,4 +82,5 @@ void PeaShooter::shoot()
     gameScene->addItem(pea);
     // qDebug() << "Peashooter successfully shot a pea!";
 }
+
 
