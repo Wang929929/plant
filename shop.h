@@ -21,6 +21,7 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     void addPlant(QString s, QPointF pos);
     void addSun(int amount);
+    void resetSun(int amount);  // 新增：重置太阳数方法
     int getSun();
 
 private:
