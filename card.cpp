@@ -3,7 +3,7 @@
 
 const QMap<QString, int> Card::index = {{"SunFlower", 0}, {"Peashooter", 1}, {"Potato", 2}, {"Pepper", 3}};
 const QVector<QString> Card::name = {"SunFlower", "Peashooter", "Potato", "Pepper"};
-const QVector<int> Card::cost = {50, 100, 150, 125};
+const QVector<int> Card::cost = {50, 100, 50, 125};
 const QVector<int> Card::cool = {227, 227, 227, 227};
 
 Card::Card(QString s){
