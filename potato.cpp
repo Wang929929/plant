@@ -3,7 +3,7 @@
 
 Potato::Potato()
 {
-    hp = 600;
+    hp = 4000;
     setMovie(":/image/plant/Potato.gif");
 }
 
