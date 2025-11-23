@@ -53,6 +53,8 @@ void Shovel::removePlant(QPointF pos){
     foreach (QGraphicsItem *item, items)
         if (item->type() == Plant::Type)
         {
+            Shop *shop = qgraphicsitem_cast<Shop *>(scene()->items(QPointF(300, 15))[0]);
+            shop -> addSun(25);
             delete item;
             return;
         }
