@@ -1,5 +1,6 @@
 #include "shovel.h"
 #include "plant.h"
+#include "shop.h"
 
 Shovel::Shovel(){}
 
