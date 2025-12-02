@@ -82,6 +82,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(gameStateTimer, &QTimer::timeout, this, &MainWindow::checkGameState);
     gameStateTimer->start(100); // 每100ms检查一次游戏状态
 
+    // 新增：游戏启动时立即开始计时
+    gameStartTime = QTime::currentTime();
+    totalPausedTime = 0;
+    isTiming = true;
 
     // 创建音量按钮
     volumeButton = new QPushButton("Volume", this);
@@ -247,39 +251,42 @@ void MainWindow::togglePause()
     if (isPaused) {
         pauseButton->setText("Resume");
         pauseButton->setStyleSheet("QPushButton { background-color: red; font-size: 14px; }");
-        // 暂停游戏逻辑
-        gameStateTimer->stop(); // 暂停状态检查
-        timer->stop();          // 暂停主游戏计时器
-        sunSpawnTimer->stop();  //【谢嘉翔】暂停太阳生成
-        qDebug() << "The game has been paused";
+
+        // 记录暂停开始时间，并停止计时
+        pauseStartTime = QTime::currentTime();
+        isTiming = false;  // 停止计时
+
+        gameStateTimer->stop();
+        timer->stop();
+        if (sunSpawnTimer) sunSpawnTimer->stop();
+
+        qDebug() << "游戏已暂停，计时停止";
     } else {
         pauseButton->setText("Pause");
         pauseButton->setStyleSheet("QPushButton { background-color: lightgreen; font-size: 14px; }");
-        // 继续游戏逻辑
-        gameStateTimer->start(100); // 恢复状态检查
-        timer->start(33);           // 恢复主游戏计时器
-        sunSpawnTimer->start();     //【谢嘉翔】恢复太阳生成
-        qDebug() << "The game continues";
+
+        // 计算暂停时长并累计
+        int pauseDuration = pauseStartTime.msecsTo(QTime::currentTime());
+        totalPausedTime += pauseDuration;
+        isTiming = true;  // 恢复计时
+
+        qDebug() << "暂停时长:" << pauseDuration << "ms, 累计暂停:" << totalPausedTime << "ms";
+
+        gameStateTimer->start(100);
+        timer->start(33);
+        if (sunSpawnTimer) sunSpawnTimer->start(10000);
+
+        qDebug() << "游戏继续，计时恢复";
     }
 }
 
-// 检查游戏状态
 void MainWindow::checkGameState()
 {
-    ++timeCount;
-    if (gameOver) return; // 已经结束就不再判断
+    if (gameOver) return;
 
     bool zombieReachedLeft = false;
 
-    // 3分钟胜利条件：timeCount >= 5400 (100ms * 60 * 3)
-    // 因为gameStateTimer是每100ms触发一次，所以：
-    // 3分钟 = 3 * 60秒 * 10次/秒 = 1800次
-    // 但我们用的是timeCount++，每次检查都增加，所以计算方式不同
-
-    // 更准确的方法：直接使用时间计算
-    static QTime startTime = QTime::currentTime();  // 游戏开始时间
-
-    // 清理无效指针并检查僵尸状态
+    // 检查是否有僵尸到达左边
     for (int i = zombiesVector.size() - 1; i >= 0; --i)
     {
         Zombies *zombie = zombiesVector[i];
@@ -288,15 +295,10 @@ void MainWindow::checkGameState()
             continue;
         }
 
-        // 使用新的 isAlive() 方法
-        if (zombie->isAlive())
+        if (zombie->isAlive() && zombie->x() <= 150)
         {
-            // 如果僵尸活着且到达最左边界，判定为失败
-            if (zombie->x() <= 150)
-            {
-                zombieReachedLeft = true;
-                break;
-            }
+            zombieReachedLeft = true;
+            break;
         }
     }
 
@@ -306,35 +308,54 @@ void MainWindow::checkGameState()
         gameOver = true;
         gameStateTimer->stop();
         timer->stop();
-
-        showGameOverImage(false); // false表示失败
-
+        showGameOverImage(false);
         qDebug() << "游戏失败：僵尸到达左侧";
     }
 
-    // 游戏胜利条件：坚持3分钟
-    else if (startTime.msecsTo(QTime::currentTime()) >= 180000)  // 180000ms = 3分钟
+    // 游戏胜利条件：真正的3分钟游戏时间（排除暂停时间）
+    else if (isTiming)  // 只在计时状态下检查胜利
     {
-        gameOver = true;
-        gameStateTimer->stop();
-        timer->stop();
+        // 计算实际游戏时间 = 当前时间 - 游戏开始时间 - 累计暂停时间
+        int actualPlayTime = gameStartTime.msecsTo(QTime::currentTime()) - totalPausedTime;
 
-        // 播放胜利音效
-        if (audioManager) {
-            audioManager->playVictorySound();
+        // 每30秒显示一次剩余时间（调试用）
+        static int lastDebugTime = 0;
+        if (actualPlayTime - lastDebugTime >= 30000) { // 每30秒
+            int remaining = (180000 - actualPlayTime) / 1000;
+            if (remaining > 0) {
+                qDebug() << "剩余时间:" << remaining << "秒";
+            }
+            lastDebugTime = actualPlayTime;
         }
 
-        QMessageBox::information(this, "游戏胜利", "恭喜你坚持了3分钟！");
-        qDebug() << "游戏胜利：成功坚持3分钟";
-    }
+        // 胜利条件：实际游戏时间达到3分钟（180,000毫秒）
+        if (actualPlayTime >= 180000)  // 3分钟 = 180,000毫秒
+        {
+            gameOver = true;
+            gameStateTimer->stop();
+            timer->stop();
 
-    // 可选：显示剩余时间（调试用）
-    int elapsedSeconds = startTime.msecsTo(QTime::currentTime()) / 1000;
-    int remainingSeconds = 180 - elapsedSeconds;  // 3分钟=180秒
-    if (remainingSeconds % 30 == 0) {  // 每30秒显示一次
-        qDebug() << "剩余时间:" << remainingSeconds << "秒";
+            if (audioManager) {
+                audioManager->playVictorySound();
+            }
+
+            int totalSeconds = actualPlayTime / 1000;
+            int pauseSeconds = totalPausedTime / 1000;
+
+            QMessageBox::information(this, "游戏胜利",
+                                     QString("恭喜你坚持了3分钟！\n"
+                                             "总用时: %1分%2秒\n"
+                                             "实际游戏时间: 3分钟\n"
+                                             "暂停时间: %3秒")
+                                         .arg(totalSeconds / 60)
+                                         .arg(totalSeconds % 60)
+                                         .arg(pauseSeconds));
+
+            qDebug() << "🎉 游戏胜利！总用时:" << totalSeconds << "秒，暂停:" << pauseSeconds << "秒";
+        }
     }
 }
+
 
 // 新增：游戏结束时，显示“僵尸吃掉了你的脑子”图片
 void MainWindow::showGameOverImage(bool isWin)
@@ -454,13 +475,18 @@ void MainWindow::restartGame()
     gameStateTimer->start(100);
     timer->start(33);
 
+    // 重置计时相关变量
+    gameStartTime = QTime::currentTime();
+    totalPausedTime = 0;
+    isTiming = true;
+
     // 重置音频
     if (audioManager) {
         audioManager->setVolume(50);
         audioManager->playBackgroundMusic();
     }
 
-    qDebug() << "游戏已重置，清理了僵尸、太阳和植物，等待玩家点击开始按钮";
+    qDebug() << "游戏已重置，清理了僵尸、太阳和植物，计时重新开始，等待玩家点击开始按钮";
 }
 
 // 【谢嘉翔添加】: 实现生成太阳的槽函数
