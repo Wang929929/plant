@@ -136,7 +136,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     QTimer *zombieBoostTimer = new QTimer(this);
     connect(zombieBoostTimer, &QTimer::timeout, this, [=]() {
-        zombieHealthBonus += 10;  // 每30秒 +5 血，可自己调
+        zombieHealthBonus += 20;  // 每30秒 +5 血，可自己调
         qDebug() << "[Zombie Boost] 当前僵尸血量加成：" << zombieHealthBonus;
     });
 
