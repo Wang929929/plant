@@ -113,33 +113,33 @@ MainWindow::MainWindow(QWidget *parent)
     spawnTimer->start(5000); // 每5秒生成一个新僵尸
 }
 
-void MainWindow::showBeginStandZombies()//开场动画，让我们种植物的时候僵尸出现的的
-{
-    static const QVector<QPointF> zombiePositions = {
-        {900, 20}, {900, 120}, {900, 220},
-        {900, 320}, {930, 320}, {930, 120}, {900, 420}
-    };
+// void MainWindow::showBeginStandZombies()//开场动画，让我们种植物的时候僵尸出现的的
+// {
+//     static const QVector<QPointF> zombiePositions = {
+//         {900, 20}, {900, 120}, {900, 220},
+//         {900, 320}, {930, 320}, {930, 120}, {900, 420}
+//     };
 
-    for (const QPointF &pos : zombiePositions)
-    {
-        Zombies *zombie = new Zombies("normalZombie", true, scene, this);
-        connect(zombie, &Zombies::zombieDied, this, &MainWindow::handleZombieDied);
-        zombie->setPos(pos);
-        zombiesVector.append(zombie);
-    }
+//     for (const QPointF &pos : zombiePositions)
+//     {
+//         Zombies *zombie = new Zombies("normalZombie", true, scene, this);
+//         connect(zombie, &Zombies::zombieDied, this, &MainWindow::handleZombieDied);
+//         zombie->setPos(pos);
+//         zombiesVector.append(zombie);
+//     }
 
-    qDebug() << "Initialized" << zombiesVector.size() << "stand zombies.";
-}
+//     qDebug() << "Initialized" << zombiesVector.size() << "stand zombies.";
+// }
 
-void MainWindow::deleteBeginZombie()//正式开始的时候调用这个，删掉开场僵尸
-{
-    for (QVector<Zombies *>::iterator it = this->zombiesVector.begin();
-         it != this->zombiesVector.end();
-         it++)
-    {
-        delete *it;
-    }
-}
+// void MainWindow::deleteBeginZombie()//正式开始的时候调用这个，删掉开场僵尸
+// {
+//     for (QVector<Zombies *>::iterator it = this->zombiesVector.begin();
+//          it != this->zombiesVector.end();
+//          it++)
+//     {
+//         delete *it;
+//     }
+// }
 void MainWindow::outZombies()//僵尸随机出现，游戏开始
 {
     if (gameOver || isPaused)
