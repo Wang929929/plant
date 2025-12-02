@@ -35,13 +35,17 @@ Zombies::~Zombies()
 
 void Zombies::initZombieStats()
 {
-    static const QMap<QString, int> health = {
+    static const QMap<QString, int> baseHealth = {
         {"normalZombie", 10},
-        {"bucketZombie", 15},// 铁桶僵尸血量15
+        {"bucketZombie", 15},
         {"ConeZombie", 12},
         {"footballZombie", 12}
     };
-    healthPoints = health.value(m_name, 10); // 默认10
+
+    int baseHP = baseHealth.value(m_name, 10);
+    int bonus = MainWindow::zombieHealthBonus;  // 读取加成
+
+    healthPoints = baseHP + bonus;
 }
 
 void Zombies::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
