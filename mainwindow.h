@@ -32,6 +32,7 @@ public:
     void outZombies();
     bool checkColliding();
     static int ZombiesNum;
+    static int zombieHealthBonus; // 随时间增加的血量加成
 
 private slots:
     // 添加槽函数
@@ -52,6 +53,9 @@ private:
     QGraphicsView *view;
 
     QVector<Zombies *> zombiesVector;
+    QTimer *spawnTimer;        // 控制僵尸生成速度的计时器
+    int spawnInterval;         // 当前僵尸生成间隔（毫秒）
+    int minSpawnInterval;      // 最小刷新间隔（毫秒，防止过快）
 
     // 添加成员变量
     QPushButton *muteButton;    // 静音按钮
