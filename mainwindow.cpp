@@ -113,33 +113,33 @@ MainWindow::MainWindow(QWidget *parent)
     spawnTimer->start(5000); // 每5秒生成一个新僵尸
 }
 
-// void MainWindow::showBeginStandZombies()//开场动画，让我们种植物的时候僵尸出现的的
-// {
-//     static const QVector<QPointF> zombiePositions = {
-//         {900, 20}, {900, 120}, {900, 220},
-//         {900, 320}, {930, 320}, {930, 120}, {900, 420}
-//     };
+void MainWindow::showBeginStandZombies()//开场动画，让我们种植物的时候僵尸出现的的
+{
+    static const QVector<QPointF> zombiePositions = {
+        {900, 20}, {900, 120}, {900, 220},
+        {900, 320}, {930, 320}, {930, 120}, {900, 420}
+    };
 
-//     for (const QPointF &pos : zombiePositions)
-//     {
-//         Zombies *zombie = new Zombies("normalZombie", true, scene, this);
-//         connect(zombie, &Zombies::zombieDied, this, &MainWindow::handleZombieDied);
-//         zombie->setPos(pos);
-//         zombiesVector.append(zombie);
-//     }
+    for (const QPointF &pos : zombiePositions)
+    {
+        Zombies *zombie = new Zombies("normalZombie", true, scene, this);
+        connect(zombie, &Zombies::zombieDied, this, &MainWindow::handleZombieDied);
+        zombie->setPos(pos);
+        zombiesVector.append(zombie);
+    }
 
-//     qDebug() << "Initialized" << zombiesVector.size() << "stand zombies.";
-// }
+    qDebug() << "Initialized" << zombiesVector.size() << "stand zombies.";
+}
 
-// void MainWindow::deleteBeginZombie()//正式开始的时候调用这个，删掉开场僵尸
-// {
-//     for (QVector<Zombies *>::iterator it = this->zombiesVector.begin();
-//          it != this->zombiesVector.end();
-//          it++)
-//     {
-//         delete *it;
-//     }
-// }
+void MainWindow::deleteBeginZombie()//正式开始的时候调用这个，删掉开场僵尸
+{
+    for (QVector<Zombies *>::iterator it = this->zombiesVector.begin();
+         it != this->zombiesVector.end();
+         it++)
+    {
+        delete *it;
+    }
+}
 void MainWindow::outZombies()//僵尸随机出现，游戏开始
 {
     if (gameOver || isPaused)
@@ -200,6 +200,45 @@ void MainWindow::toggleMute()
     }
 }
 
+// 新增：显示音量菜单
+void MainWindow::showVolumeMenu()
+{
+    QMenu volumeMenu(this);
+
+    // 添加音量选项
+    QAction *lowVolume = volumeMenu.addAction("🔈 Low (25%)");
+    QAction *mediumVolume = volumeMenu.addAction("🔉 Medium (50%)");
+    QAction *highVolume = volumeMenu.addAction("🔊 High (100%)");
+    QAction *muteAction = volumeMenu.addAction("🔇 Mute (0%)");
+
+    // 显示菜单
+    QAction *selectedAction = volumeMenu.exec(volumeButton->mapToGlobal(QPoint(0, volumeButton->height())));
+
+    if (selectedAction) {
+        if (selectedAction == lowVolume) {
+            audioManager->setVolume(25);
+            volumeButton->setText("Vol:Low");
+            isMuted = false;
+            muteButton->setText("Mute");
+        } else if (selectedAction == mediumVolume) {
+            audioManager->setVolume(50);
+            volumeButton->setText("Vol:Mid");
+            isMuted = false;
+            muteButton->setText("Mute");
+        } else if (selectedAction == highVolume) {
+            audioManager->setVolume(100);
+            volumeButton->setText("Vol:High");
+            isMuted = false;
+            muteButton->setText("Mute");
+        } else if (selectedAction == muteAction) {
+            audioManager->setVolume(0);
+            volumeButton->setText("Vol:Mute");
+            isMuted = true;
+            muteButton->setText("Unmute");
+        }
+    }
+}
+
 // 暂停/继续功能
 void MainWindow::togglePause()
 {
@@ -231,7 +270,14 @@ void MainWindow::checkGameState()
     if (gameOver) return; // 已经结束就不再判断
 
     bool zombieReachedLeft = false;
-    bool allZombiesDefeated = timeCount >= 300? true : false;  // 假设全部死亡，若发现活的就设为 false
+
+    // 3分钟胜利条件：timeCount >= 5400 (100ms * 60 * 3)
+    // 因为gameStateTimer是每100ms触发一次，所以：
+    // 3分钟 = 3 * 60秒 * 10次/秒 = 1800次
+    // 但我们用的是timeCount++，每次检查都增加，所以计算方式不同
+
+    // 更准确的方法：直接使用时间计算
+    static QTime startTime = QTime::currentTime();  // 游戏开始时间
 
     // 清理无效指针并检查僵尸状态
     for (int i = zombiesVector.size() - 1; i >= 0; --i)
@@ -245,8 +291,6 @@ void MainWindow::checkGameState()
         // 使用新的 isAlive() 方法
         if (zombie->isAlive())
         {
-            allZombiesDefeated = false;
-
             // 如果僵尸活着且到达最左边界，判定为失败
             if (zombie->x() <= 150)
             {
@@ -263,17 +307,13 @@ void MainWindow::checkGameState()
         gameStateTimer->stop();
         timer->stop();
 
-        // 新增：移除原来的弹窗，改用图片显示
-        // QMessageBox::information(this, "游戏结束", "僵尸吃掉了你的脑子！");
-
-        // 新增：用图片显示
-        showGameOverImage(false); //false表示失败
+        showGameOverImage(false); // false表示失败
 
         qDebug() << "游戏失败：僵尸到达左侧";
     }
 
-    // 游戏胜利条件
-    else if (allZombiesDefeated && ZombiesNum > 0 && zombiesVector.isEmpty())  // 防止刚开始没僵尸就胜利且确保vector中没有僵尸
+    // 游戏胜利条件：坚持3分钟
+    else if (startTime.msecsTo(QTime::currentTime()) >= 180000)  // 180000ms = 3分钟
     {
         gameOver = true;
         gameStateTimer->stop();
@@ -284,8 +324,15 @@ void MainWindow::checkGameState()
             audioManager->playVictorySound();
         }
 
-        QMessageBox::information(this, "游戏胜利", "恭喜你击败了所有僵尸！");
-        qDebug() << "游戏胜利：所有僵尸被消灭";
+        QMessageBox::information(this, "游戏胜利", "恭喜你坚持了3分钟！");
+        qDebug() << "游戏胜利：成功坚持3分钟";
+    }
+
+    // 可选：显示剩余时间（调试用）
+    int elapsedSeconds = startTime.msecsTo(QTime::currentTime()) / 1000;
+    int remainingSeconds = 180 - elapsedSeconds;  // 3分钟=180秒
+    if (remainingSeconds % 30 == 0) {  // 每30秒显示一次
+        qDebug() << "剩余时间:" << remainingSeconds << "秒";
     }
 }
 
@@ -414,45 +461,6 @@ void MainWindow::restartGame()
     }
 
     qDebug() << "游戏已重置，清理了僵尸、太阳和植物，等待玩家点击开始按钮";
-}
-
-// 新增：显示音量菜单
-void MainWindow::showVolumeMenu()
-{
-    QMenu volumeMenu(this);
-
-    // 添加音量选项
-    QAction *lowVolume = volumeMenu.addAction("🔈 Low (25%)");
-    QAction *mediumVolume = volumeMenu.addAction("🔉 Medium (50%)");
-    QAction *highVolume = volumeMenu.addAction("🔊 High (100%)");
-    QAction *muteAction = volumeMenu.addAction("🔇 Mute (0%)");
-
-    // 显示菜单
-    QAction *selectedAction = volumeMenu.exec(volumeButton->mapToGlobal(QPoint(0, volumeButton->height())));
-
-    if (selectedAction) {
-        if (selectedAction == lowVolume) {
-            audioManager->setVolume(25);
-            volumeButton->setText("Vol:Low");
-            isMuted = false;
-            muteButton->setText("Mute");
-        } else if (selectedAction == mediumVolume) {
-            audioManager->setVolume(50);
-            volumeButton->setText("Vol:Mid");
-            isMuted = false;
-            muteButton->setText("Mute");
-        } else if (selectedAction == highVolume) {
-            audioManager->setVolume(100);
-            volumeButton->setText("Vol:High");
-            isMuted = false;
-            muteButton->setText("Mute");
-        } else if (selectedAction == muteAction) {
-            audioManager->setVolume(0);
-            volumeButton->setText("Vol:Mute");
-            isMuted = true;
-            muteButton->setText("Unmute");
-        }
-    }
 }
 
 // 【谢嘉翔添加】: 实现生成太阳的槽函数
