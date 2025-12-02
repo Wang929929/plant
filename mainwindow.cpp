@@ -102,55 +102,50 @@ MainWindow::MainWindow(QWidget *parent)
 
     timer -> start(33);
     view->show();
-    //this->showBeginStandZombies();
-
+    
     connect(timer, &QTimer::timeout, scene, &QGraphicsScene::advance);
-    // // 立即生成几个用于测试的僵尸（可删）!!!!!如果要测试就把下面的commend解除掉
-    //for (int i = 0; i < 3; ++i)
-    //outZombies();
+    spawnInterval = 6000;      // 初始 6 秒
+    minSpawnInterval = 1000;   // 最快 1 秒
 
-    // 自动生成僵尸计时器（每 5 秒生成一个）用来测试的，不用管这个
-    QTimer *spawnTimer = new QTimer(this);
+    spawnTimer = new QTimer(this);
+    spawnTimer->setInterval(spawnInterval);
+
     connect(spawnTimer, &QTimer::timeout, this, [this]() {
         outZombies();
     });
-    spawnTimer->start(5000); // 每5秒生成一个新僵尸
+
+    spawnTimer->start();
+
+
+    // ====== 刷新加速计时器（每 20 秒加速一次）======
+    QTimer *speedUpTimer = new QTimer(this);
+
+    connect(speedUpTimer, &QTimer::timeout, this, [this]() {
+
+        if (spawnInterval > minSpawnInterval) {
+            spawnInterval -= 500; // 每次减少 0.5 秒
+            spawnTimer->setInterval(spawnInterval);
+        }
+
+        qDebug() << "[Spawn Speed Up] 当前僵尸刷新间隔(毫秒):" << spawnInterval;
+    });
+
+    speedUpTimer->start(20000); // 每 20 秒加速一次
+    // ======（新增）僵尸强度随时间增长 ======
+    zombieHealthBonus = 0;
+
+    QTimer *zombieBoostTimer = new QTimer(this);
+    connect(zombieBoostTimer, &QTimer::timeout, this, [=]() {
+        zombieHealthBonus += 10;  // 每30秒 +5 血，可自己调
+        qDebug() << "[Zombie Boost] 当前僵尸血量加成：" << zombieHealthBonus;
+    });
+
+    zombieBoostTimer->start(30000); // 每30秒触发一次
 }
 
-void MainWindow::showBeginStandZombies()//开场动画，让我们种植物的时候僵尸出现的的
-{
-    static const QVector<QPointF> zombiePositions = {
-        {900, 20}, {900, 120}, {900, 220},
-        {900, 320}, {930, 320}, {930, 120}, {900, 420}
-    };
-
-    for (const QPointF &pos : zombiePositions)
-    {
-        Zombies *zombie = new Zombies("normalZombie", true, scene, this);
-        connect(zombie, &Zombies::zombieDied, this, &MainWindow::handleZombieDied);
-        zombie->setPos(pos);
-        zombiesVector.append(zombie);
-    }
-
-    qDebug() << "Initialized" << zombiesVector.size() << "stand zombies.";
-}
-
-void MainWindow::deleteBeginZombie()//正式开始的时候调用这个，删掉开场僵尸
-{
-    for (QVector<Zombies *>::iterator it = this->zombiesVector.begin();
-         it != this->zombiesVector.end();
-         it++)
-    {
-        delete *it;
-    }
-}
 void MainWindow::outZombies()//僵尸随机出现，游戏开始
 {
     if (gameOver || isPaused)
-        return;
-
-    // 最大僵尸数量
-    if (ZombiesNum >= 40)
         return;
 
     // 以概率生成，降低出现频率
@@ -523,3 +518,4 @@ MainWindow::~MainWindow()
 }
 
 int MainWindow::ZombiesNum = 0;
+int MainWindow::zombieHealthBonus = 0;
