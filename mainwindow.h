@@ -60,6 +60,10 @@ private:
     QPushButton *volumeButton;  // 新增：音量调节按钮
     AudioManager *audioManager; // 新增：音频管理器
     QTimer *sunSpawnTimer;      // 【谢嘉翔】新增这行：太阳生成定时器
+    QTime gameStartTime;        // 新增：游戏开始的时间（程序启动时）
+    int totalPausedTime;        // 新增：累计暂停的时间（毫秒）
+    QTime pauseStartTime;       // 新增：暂停开始的时间
+    bool isTiming;              // 新增：是否正在计时
 
     // 游戏状态变量
     bool isMuted;
