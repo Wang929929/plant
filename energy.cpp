@@ -2,11 +2,14 @@
 #include "plant.h"
 #include "zombies.h"
 #include "shop.h"
+#include "peashooter.h"
+#include "sunflower.h"
+#include "potato.h"
 #include <QDebug>
 
 Energy::Energy() : isDragging(false){
     counter = 0;
-    cool = 33;  //能量冷却用时
+    cool = 33;
 }
 
 QRectF Energy::boundingRect() const {
@@ -115,10 +118,8 @@ void Energy::applyEnergyToItem(QPointF pos){
             return;
         }
     }
-
-    // 对僵尸使用能量
     QPointF zombiePos;
-    zombiePos.setX(pos.x()-1);
+    zombiePos.setX(pos.x()-2);
     zombiePos.setY(pos.y());
     QList<QGraphicsItem *> zombieItems = scene()->items(zombiePos);
     foreach (QGraphicsItem *item, zombieItems) {
