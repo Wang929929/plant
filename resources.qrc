@@ -27,10 +27,14 @@
         <file>image/plant/Boom.gif</file>
         <file>image/plant/Fire.gif</file>
         <file>image/plant/SunFlower.gif</file>
+        <file>image/plant/SunFlowerEnhanced.gif</file>
         <file>image/plant/PeaShooter.gif</file>
+        <file>image/plant/PeaShooterEnhanced.gif</file>
         <file>image/plant/Pepper.gif</file>
         <file>image/plant/Potato.gif</file>
+        <file>image/plant/PotatoEnhanced.gif</file>
         <file>image/plant/Pea.png</file>
+        <file>image/plant/zombiePotato.png</file>
         <file>image/zombie_eat_brain.png</file>
     </qresource>
 </RCC>
