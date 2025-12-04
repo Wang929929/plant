@@ -133,8 +133,10 @@ void Energy::applyEnergyToItem(QPointF pos){
             qDebug() << "Planting zombiepotato at" << correctPos;
             Shop *shop = qgraphicsitem_cast<Shop *>(scene()->items(QPointF(300, 15))[0]);
             shop->addPlant("zombiePotato", correctPos);
+            counter = 0;
             return;
         }
     }
 }
+
 
