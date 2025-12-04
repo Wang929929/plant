@@ -11,6 +11,7 @@ CONFIG += c++17
 SOURCES += \
     audiomanager.cpp \
     card.cpp \
+    energy.cpp \
     fire.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -24,11 +25,13 @@ SOURCES += \
     shovel.cpp\
     sun.cpp \
     sunflower.cpp \
+    zombiePotato.cpp \
     zombies.cpp
 
 HEADERS += \
     audiomanager.h \
     card.h \
+    energy.h \
     fire.h \
     mainwindow.h \
     map.h \
@@ -41,6 +44,7 @@ HEADERS += \
     shovel.h \
     sun.h \
     sunflower.h \
+    zombiePotato.h \
     zombies.h
 
 FORMS += \
