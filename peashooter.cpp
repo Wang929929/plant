@@ -6,11 +6,18 @@
 #include <QDebug>
 
 PeaShooter::PeaShooter()
-    : shootInterval(2000), gameScene(nullptr)
+    : shootInterval(2000), gameScene(nullptr),
+    enhanced(false), originalShootInterval(2000), enhancedShootInterval(1000)  // 增强后射速加倍
 {
     hp = 300;
     lastShootTime = QTime::currentTime();
-    setMovie(":/image/plant/PeaShooter.gif");
+
+    // 设置GIF路径
+    originalGifPath = ":/image/plant/PeaShooter.gif";
+    enhancedGifPath = ":/image/plant/PeaShooterEnhanced.gif";
+
+    // 设置初始动画
+    setMovie(originalGifPath);
     // qDebug() << "Peashooter created (default constructor)!";
 }
 
@@ -24,11 +31,19 @@ bool PeaShooter::collidesWithItem(const QGraphicsItem *other, Qt::ItemSelectionM
 }
 
 PeaShooter::PeaShooter(QGraphicsScene *scene, QGraphicsItem *parent)
-    : Plant(), shootInterval(2000), gameScene(scene)
+    : Plant(), shootInterval(2000), gameScene(scene),
+    enhanced(false), originalShootInterval(2000), enhancedShootInterval(1000)
 {
     hp = 300;
     lastShootTime = QTime::currentTime();
-    setMovie(":/image/plant/PeaShooter.gif");
+
+    // 设置GIF路径
+    originalGifPath = ":/image/plant/PeaShooter.gif";
+    enhancedGifPath = ":/image/plant/PeaShooterEnhanced.gif";
+
+    // 设置初始动画
+    setMovie(originalGifPath);
+
     // qDebug() << "Peashooter created with scene!";
 }
 
@@ -57,22 +72,12 @@ void PeaShooter::advance(int phase)
 
 void PeaShooter::shoot()
 {
-    // qDebug() << "Shoot function called!";
-
     if(!gameScene) {
-        // qDebug() << "gameScene is null, trying to get from parent..."; //？？
         if(scene()) {
             gameScene = scene();
-            // qDebug() << "Got scene from parent:" << gameScene; //？？
         } else {
-            // qDebug() << "Cannot get scene from parent!";
             return;
         }
-    }
-
-    if(!gameScene) {
-        // qDebug() << "gameScene is still null, cannot shoot!";
-        return;
     }
 
     // 创建豌豆
@@ -81,8 +86,16 @@ void PeaShooter::shoot()
 
     // 豌豆添加到场景
     gameScene->addItem(pea);
-    // qDebug() << "Peashooter successfully shot a pea!";
 }
 
+//新增：能量增强方法-射速加倍
+void PeaShooter::enhanceWithEnergy()
+{
+    if (enhanced) {
+        return;
+    }
 
-
+    shootInterval = enhancedShootInterval;  // 应用增强效果-射速加倍
+    setMovie(enhancedGifPath);  // 更换GIF动画
+    enhanced = true;
+}
