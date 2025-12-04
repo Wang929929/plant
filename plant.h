@@ -18,6 +18,12 @@ public:
     bool collidesWithItem(const QGraphicsItem *other, Qt::ItemSelectionMode mode) const override;
     int type() const override;
     void setMovie(QString path);
+
+    // 能量增强相关方法
+    virtual bool canBeEnhanced() const { return false; }  // 默认植物不能被增强
+    virtual void enhanceWithEnergy() { qDebug() << "This plant cannot be enhanced."; }
+    virtual bool isEnhanced() const { return false; }
+
 protected:
     QMovie *movie;
     int atk;

@@ -4,6 +4,7 @@
 #include "shovel.h"
 #include "zombies.h" //新增
 #include "audiomanager.h" //新增
+#include "energy.h"
 #include <QVector>
 #include <QRandomGenerator>
 #include <QPushButton>
@@ -51,6 +52,10 @@ MainWindow::MainWindow(QWidget *parent)
     Shovel *shovel = new Shovel;
     shovel->setPos(825, 65);
     scene->addItem(shovel);
+    //初始化energy
+    Energy *energy = new Energy;
+    energy->setPos(732, 55);
+    scene->addItem(energy);
     // 【谢嘉翔添加】: 初始化并启动太阳生成定时器
     sunSpawnTimer = new QTimer(this);
     connect(sunSpawnTimer, &QTimer::timeout, this, &MainWindow::spawnSun);
@@ -102,7 +107,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     timer -> start(33);
     view->show();
-    
+
     connect(timer, &QTimer::timeout, scene, &QGraphicsScene::advance);
     spawnInterval = 6000;      // 初始 6 秒
     minSpawnInterval = 1000;   // 最快 1 秒
@@ -136,7 +141,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     QTimer *zombieBoostTimer = new QTimer(this);
     connect(zombieBoostTimer, &QTimer::timeout, this, [=]() {
-        zombieHealthBonus += 20;  // 每30秒 +5 血，可自己调
+        zombieHealthBonus += 10;  // 每30秒 +5 血，可自己调
         qDebug() << "[Zombie Boost] 当前僵尸血量加成：" << zombieHealthBonus;
     });
 

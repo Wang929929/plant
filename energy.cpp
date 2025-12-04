@@ -9,7 +9,7 @@
 
 Energy::Energy() : isDragging(false){
     counter = 0;
-    cool = 33;
+    cool = 1818;
 }
 
 QRectF Energy::boundingRect() const {

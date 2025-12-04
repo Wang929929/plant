@@ -1,152 +1,60 @@
-#include "shop.h"
-#include "plant.h"
-#include "card.h"
-#include "peashooter.h"
-#include "sunflower.h"
-#include "potato.h"
-#include "pepper.h"
-#include "zombiePotato.h"
+#include "map.h"
+#include "shovel.h"
+#include "energy.h"
 
-#include <QPainter>
-#include <QGraphicsScene>
-#include <QList>
-#include <QGraphicsObject>
-#include <QGraphicsSceneMouseEvent>
-#include <QDrag>
-#include <QMimeData>
-#include <QApplication>
-#include <QTimer>
-#include <QDebug>
-#include <QHash>
-
-
-
-Shop::Shop() : m_sun(200){
-    // 搭建图框(共8个）
-    Card *card = nullptr;
-    for (int i = 0; i < Card::name.size(); ++i)
-    {
-        card = new Card(Card::name[i]);
-        card->setParentItem(this);
-        card->setPos(70 + 65 * i, 50);
-    }
-    /*
-    std::vector<std::string> card_names = {"Peashooter","Sunflower","Wallnut","PotatoMine","CherryBomb",
-                     "SnowPea","Chomper","Repeater"};
-    int max_num = sizeof(card_names);
-*/
+Map::Map(){
+    dragOver=false;
+    setAcceptDrops(true);
 }
 
-// boundingRect 和 paint 函数保持不变)
-QRectF Shop::boundingRect() const{
-    return QRectF(0, 0, 800, 100);
+//植物矩阵边界判定，需要根据地图大小调整
+QRectF Map::boundingRect() const{
+    return QRectF(-369, -235, 738, 470);
 }
 
-void Shop::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
+//空函数paint，避免报错，可根据后续时间和需要进一步优化
+void Map::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
+    Q_UNUSED(painter)
     Q_UNUSED(option)
     Q_UNUSED(widget)
-
-    painter->save();
-
-    // 绘制太阳币
-    //QRectF sunIconRect(-70, 20, 70, 50);
-    QRectF sunIconRect(-70, 0, 650, 100);// 太阳币图标的位置 (x, y, w, h)
-    QRectF sunTextRect(-40, 60, 50, 50); // 太阳币文本的位置 (x, y, w, h)
-
-    // 绘制图标
-    QPixmap sunIcon(":/image/shop/Shop.png");
-    if (!sunIcon.isNull()) {
-        painter->drawPixmap(sunIconRect, sunIcon, sunIcon.rect());
-    } else {
-        // 如果图片加载失败，画一个黄色矩形作为备用
-        painter->setBrush(Qt::yellow);
-        painter->drawRect(sunIconRect);
-    }
-    // 绘制文本
-    painter->setPen(Qt::black);
-    painter->setFont(QFont("Arial", 16, QFont::Bold));
-    painter->drawText(sunTextRect, Qt::AlignCenter, QString::number(m_sun));
-    painter->restore();
 }
 
-// 添加植物
-void Shop::addPlant(QString s, QPointF pos){
-    if (!scene()) {
-        qDebug() << "Planting failed: Shop has no scene.";
-        return;
-    }
-
-    QList<QGraphicsItem *> items = scene()->items(pos);
-    foreach (QGraphicsItem *item, items) {
-        if (item->type() == Plant::Type) {
-            qDebug() << "Planting failed: Spot occupied.";
-            return;
-        }
-    }
-
-
-    Plant *plant = nullptr;
-    int index = s=="zombiePotato"? 4 : Card::index[s];
-    switch (index){
-    case 0:
-        plant = new SunFlower; break;
-    case 1:
-        plant = new PeaShooter; break;
-    case 2:
-        plant = new Potato; break;
-    case 3:
-        plant = new Pepper; break;
-    case 4:
-        plant = new zombiePotato; break;
-    }
-
-    if (plant) {
-        int cost = Card::cost[Card::index[s]];
-        plant->setPos(pos);
-        scene()->addItem(plant);
-        m_sun -= cost;
-        qDebug() << "Planted" << s << "for" << cost << "sun. Remaining:" << m_sun;
-
-        QList<QGraphicsItem *> child = childItems();
-        foreach (QGraphicsItem *item, child)
-        {
-            Card *card = qgraphicsitem_cast<Card *>(item);
-            if (card->text == s)
-                card->counter = 0;
-        }
-
+void Map::dragEnterEvent(QGraphicsSceneDragDropEvent *event){
+    if (event -> mimeData() -> hasText()){
+        event -> setAccepted(true);
+        dragOver = true;
         update();
-
-    } else {
-        qDebug() << "Planting failed: Plant object creation failed for" << s;
     }
+    else event -> setAccepted(false);
 }
 
-//增加太阳币
-void Shop::addSun(int amount){
-    m_sun += amount;
-    qDebug() << "Added" << amount << "sun. Total:" << m_sun;
-    update(); // 重绘
+void Map::dragLeaveEvent(QGraphicsSceneDragDropEvent *event){
+    Q_UNUSED(event);
+    dragOver = false;
+    update();
 }
 
-// 新增：重置太阳数
-void Shop::resetSun(int amount)
-{
-    m_sun = amount;
-    update();  // 重绘显示新的太阳数
-    qDebug() << "商店太阳数重置为:" << m_sun;
-}
+void Map::dropEvent(QGraphicsSceneDragDropEvent *event){
+    dragOver = false;
+    //网格坐标对齐，需要根据图片和网格大小调整数据
+    if (event -> mimeData() -> hasText()){
+        QString s = event -> mimeData() -> text();
+        QPointF pos = mapToScene(event -> pos());
+        pos.setX((int(pos.x()) - 249) / 82 * 82 + 290);
+        pos.setY((int(pos.y()) - 81) / 98 * 98 + 130);
+        if (s == "Shovel"){
+            Shovel *shovel = qgraphicsitem_cast<Shovel *>(scene()->items(QPointF(825, 65))[0]);
+            shovel->removePlant(pos);
+        }
+        else if (s == "Energy"){
+            Energy *energy = qgraphicsitem_cast<Energy *>(scene()->items(QPointF(732, 55))[0]);
+            energy->applyEnergyToItem(pos);
+        }
+        else{
+            //商店查找，具体坐标需要依据情况而定
+            Shop *shop = qgraphicsitem_cast<Shop *>(scene()->items(QPointF(300, 15))[0]);
+            shop->addPlant(s, pos); //shop的植物添加方法
+        }
+    }
 
-int Shop::getSun(){
-    return m_sun;
-}
-
-
-void Shop::useEnergy()
-{
-    energyAvailable = false;
-    energyLastUsed = QTime::currentTime();
-    energy = nullptr;  // 能量项会在拖动后删除
-    update();  // 重绘
-    qDebug() << "Energy used, starting cooldown";
 }

@@ -5,6 +5,7 @@
 #include "sunflower.h"
 #include "potato.h"
 #include "pepper.h"
+#include "zombiePotato.h"
 
 #include <QPainter>
 #include <QGraphicsScene>
@@ -34,8 +35,6 @@ Shop::Shop() : m_sun(200){
                      "SnowPea","Chomper","Repeater"};
     int max_num = sizeof(card_names);
 */
-
-
 }
 
 // boundingRect 和 paint 函数保持不变)
@@ -87,7 +86,8 @@ void Shop::addPlant(QString s, QPointF pos){
 
 
     Plant *plant = nullptr;
-    switch (Card::index[s]){
+    int index = s=="zombiePotato"? 4 : Card::index[s];
+    switch (index){
     case 0:
         plant = new SunFlower; break;
     case 1:
@@ -96,6 +96,8 @@ void Shop::addPlant(QString s, QPointF pos){
         plant = new Potato; break;
     case 3:
         plant = new Pepper; break;
+    case 4:
+        plant = new zombiePotato; break;
     }
 
     if (plant) {
@@ -138,5 +140,4 @@ void Shop::resetSun(int amount)
 int Shop::getSun(){
     return m_sun;
 }
-
 
