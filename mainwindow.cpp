@@ -123,7 +123,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     // ====== 刷新加速计时器（每 20 秒加速一次）======
-    QTimer *speedUpTimer = new QTimer(this);
+    speedUpTimer = new QTimer(this);
+    zombieBoostTimer = new QTimer(this);
 
     connect(speedUpTimer, &QTimer::timeout, this, [this]() {
 
@@ -139,7 +140,6 @@ MainWindow::MainWindow(QWidget *parent)
     // ======（新增）僵尸强度随时间增长 ======
     zombieHealthBonus = 0;
 
-    QTimer *zombieBoostTimer = new QTimer(this);
     connect(zombieBoostTimer, &QTimer::timeout, this, [=]() {
         zombieHealthBonus += 10;  // 每30秒 +5 血，可自己调
         qDebug() << "[Zombie Boost] 当前僵尸血量加成：" << zombieHealthBonus;
@@ -259,6 +259,8 @@ void MainWindow::togglePause()
         gameStateTimer->stop();
         timer->stop();
         if (sunSpawnTimer) sunSpawnTimer->stop();
+        speedUpTimer->stop();        // ★ 新增
+        zombieBoostTimer->stop();    // ★ 新增
 
         qDebug() << "游戏已暂停，计时停止";
     } else {
@@ -275,6 +277,8 @@ void MainWindow::togglePause()
         gameStateTimer->start(100);
         timer->start(33);
         if (sunSpawnTimer) sunSpawnTimer->start(10000);
+        speedUpTimer->start(20000);      // ★ 新增
+        zombieBoostTimer->start(30000);  // ★ 新增
 
         qDebug() << "游戏继续，计时恢复";
     }
@@ -485,6 +489,17 @@ void MainWindow::restartGame()
         audioManager->setVolume(50);
         audioManager->playBackgroundMusic();
     }
+    //重置僵尸
+    speedUpTimer->stop();
+    zombieBoostTimer->stop();
+
+    spawnInterval = 6000;
+    spawnTimer->setInterval(spawnInterval);
+
+    zombieHealthBonus = 0;
+
+    speedUpTimer->start(20000);
+    zombieBoostTimer->start(30000);
 
     qDebug() << "游戏已重置，清理了僵尸、太阳和植物，计时重新开始，等待玩家点击开始按钮";
 }
