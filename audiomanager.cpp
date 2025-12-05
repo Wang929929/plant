@@ -19,6 +19,7 @@ AudioManager::AudioManager(QObject *parent) : QObject(parent)
     backgroundMusic->setAudioOutput(audioOutput);
     backgroundMusic->setSource(QUrl("qrc:/sounds/background_music.MP3"));
     audioOutput->setVolume(0.5);  // 0.0 - 1.0范围
+    backgroundMusic->setLoops(QMediaPlayer::Infinite);
 
     // 初始化胜利音效
     victorySound = new QSoundEffect(this);
