@@ -61,6 +61,8 @@ private:
     QPushButton *muteButton;    // 静音按钮
     QPushButton *pauseButton;   // 暂停按钮
     QTimer *gameStateTimer;     // 游戏状态检查定时器
+    QTimer *speedUpTimer;
+    QTimer *zombieBoostTimer;
     QPushButton *volumeButton;  // 新增：音量调节按钮
     AudioManager *audioManager; // 新增：音频管理器
     QTimer *sunSpawnTimer;      // 【谢嘉翔】新增这行：太阳生成定时器
