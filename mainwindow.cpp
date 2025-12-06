@@ -64,18 +64,22 @@ MainWindow::MainWindow(QWidget *parent)
     //创建按钮
     muteButton = new QPushButton("Mute", this);
     pauseButton = new QPushButton("Pause", this);
+    volumeButton = new QPushButton("Volume", this);
 
     // 设置按钮位置和样式（根据界面调整位置）
     muteButton->setGeometry(411, 552, 80, 30);
     pauseButton->setGeometry(511, 552, 80, 30);
+    volumeButton->setGeometry(611, 552, 80, 30); 
 
     // 设置按钮样式
     muteButton->setStyleSheet("QPushButton { background-color: lightblue; font-size: 14px; }");
     pauseButton->setStyleSheet("QPushButton { background-color: lightgreen; font-size: 14px; }");
+    volumeButton->setStyleSheet("QPushButton { background-color: #FFA500; font-size: 14px; color: white; }");
 
     // 连接信号和槽
     connect(muteButton, &QPushButton::clicked, this, &MainWindow::toggleMute);
     connect(pauseButton, &QPushButton::clicked, this, &MainWindow::togglePause);
+    connect(volumeButton, &QPushButton::clicked, this, &MainWindow::showVolumeMenu);
 
     // 初始化状态变量
     isMuted = false;
@@ -91,14 +95,6 @@ MainWindow::MainWindow(QWidget *parent)
     gameStartTime = QTime::currentTime();
     totalPausedTime = 0;
     isTiming = true;
-
-    // 创建音量按钮
-    volumeButton = new QPushButton("Volume", this);
-    volumeButton->setGeometry(611, 552, 80, 30);  // 放在其他按钮右边
-    volumeButton->setStyleSheet("QPushButton { background-color: #FFA500; font-size: 14px; color: white; }");
-
-    // 连接音量按钮信号
-    connect(volumeButton, &QPushButton::clicked, this, &MainWindow::showVolumeMenu);
 
     // 初始化音频管理器
     audioManager = AudioManager::instance();
@@ -188,7 +184,6 @@ void MainWindow::toggleMute()
     if (isMuted) {
         muteButton->setText("Unmute");
         muteButton->setStyleSheet("QPushButton { background-color: orange; font-size: 14px; }");
-        // 这里添加静音游戏音效的代码
         // 使用音频管理器静音
         audioManager->setVolume(0);
         qDebug() << "The game has been muted";
@@ -196,50 +191,10 @@ void MainWindow::toggleMute()
     } else {
         muteButton->setText("Mute");
         muteButton->setStyleSheet("QPushButton { background-color: lightblue; font-size: 14px; }");
-        // 这里添加取消静音的代码
         // 使用音频管理器取消静音
         audioManager->setVolume(50);
         qDebug() << "The game has been unmuted";
         // 如果需要：audioManager->setMute(false);
-    }
-}
-
-// 新增：显示音量菜单
-void MainWindow::showVolumeMenu()
-{
-    QMenu volumeMenu(this);
-
-    // 添加音量选项
-    QAction *lowVolume = volumeMenu.addAction("🔈 Low (25%)");
-    QAction *mediumVolume = volumeMenu.addAction("🔉 Medium (50%)");
-    QAction *highVolume = volumeMenu.addAction("🔊 High (100%)");
-    QAction *muteAction = volumeMenu.addAction("🔇 Mute (0%)");
-
-    // 显示菜单
-    QAction *selectedAction = volumeMenu.exec(volumeButton->mapToGlobal(QPoint(0, volumeButton->height())));
-
-    if (selectedAction) {
-        if (selectedAction == lowVolume) {
-            audioManager->setVolume(25);
-            volumeButton->setText("Vol:Low");
-            isMuted = false;
-            muteButton->setText("Mute");
-        } else if (selectedAction == mediumVolume) {
-            audioManager->setVolume(50);
-            volumeButton->setText("Vol:Mid");
-            isMuted = false;
-            muteButton->setText("Mute");
-        } else if (selectedAction == highVolume) {
-            audioManager->setVolume(100);
-            volumeButton->setText("Vol:High");
-            isMuted = false;
-            muteButton->setText("Mute");
-        } else if (selectedAction == muteAction) {
-            audioManager->setVolume(0);
-            volumeButton->setText("Vol:Mute");
-            isMuted = true;
-            muteButton->setText("Unmute");
-        }
     }
 }
 
@@ -283,6 +238,46 @@ void MainWindow::togglePause()
         qDebug() << "游戏继续，计时恢复";
     }
 }
+
+// 新增：显示音量菜单
+void MainWindow::showVolumeMenu()
+{
+    QMenu volumeMenu(this);
+
+    // 添加音量选项
+    QAction *lowVolume = volumeMenu.addAction("🔈 Low (25%)");
+    QAction *mediumVolume = volumeMenu.addAction("🔉 Medium (50%)");
+    QAction *highVolume = volumeMenu.addAction("🔊 High (100%)");
+    QAction *muteAction = volumeMenu.addAction("🔇 Mute (0%)");
+
+    // 显示菜单
+    QAction *selectedAction = volumeMenu.exec(volumeButton->mapToGlobal(QPoint(0, volumeButton->height())));
+
+    if (selectedAction) {
+        if (selectedAction == lowVolume) {
+            audioManager->setVolume(25);
+            volumeButton->setText("Vol:Low");
+            isMuted = false;
+            muteButton->setText("Mute");
+        } else if (selectedAction == mediumVolume) {
+            audioManager->setVolume(50);
+            volumeButton->setText("Vol:Mid");
+            isMuted = false;
+            muteButton->setText("Mute");
+        } else if (selectedAction == highVolume) {
+            audioManager->setVolume(100);
+            volumeButton->setText("Vol:High");
+            isMuted = false;
+            muteButton->setText("Mute");
+        } else if (selectedAction == muteAction) {
+            audioManager->setVolume(0);
+            volumeButton->setText("Vol:Mute");
+            isMuted = true;
+            muteButton->setText("Unmute");
+        }
+    }
+}
+
 
 void MainWindow::checkGameState()
 {
