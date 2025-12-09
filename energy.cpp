@@ -3,13 +3,11 @@
 #include "zombies.h"
 #include "shop.h"
 #include "peashooter.h"
-#include "sunflower.h"
-#include "potato.h"
 #include <QDebug>
 
 Energy::Energy() : isDragging(false){
     counter = 0;
-    cool = 1818;
+    cool = 100;
 }
 
 QRectF Energy::boundingRect() const {
@@ -119,7 +117,7 @@ void Energy::applyEnergyToItem(QPointF pos){
         }
     }
     QPointF zombiePos;
-    zombiePos.setX(pos.x()-2);
+    zombiePos.setX(pos.x()-5);
     zombiePos.setY(pos.y());
     QList<QGraphicsItem *> zombieItems = scene()->items(zombiePos);
     foreach (QGraphicsItem *item, zombieItems) {
@@ -138,5 +136,4 @@ void Energy::applyEnergyToItem(QPointF pos){
         }
     }
 }
-
 

@@ -1,6 +1,8 @@
 #include "map.h"
 #include "shovel.h"
 #include "energy.h"
+#include "shop.h"
+
 
 Map::Map(){
     dragOver=false;

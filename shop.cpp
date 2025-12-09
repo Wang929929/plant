@@ -101,7 +101,7 @@ void Shop::addPlant(QString s, QPointF pos){
     }
 
     if (plant) {
-        int cost = Card::cost[Card::index[s]];
+        int cost = s=="zombiePotato"? 0 : Card::cost[Card::index[s]];
         plant->setPos(pos);
         scene()->addItem(plant);
         m_sun -= cost;

@@ -8,7 +8,7 @@ const QVector<int> Card::cool = {227, 227, 909, 1515};
 
 Card::Card(QString s){
     text = s;
-    counter = 0;
+    counter = 5000;
 }
 
 QRectF Card::boundingRect() const

@@ -4,7 +4,8 @@
 Plant::Plant()
 {
     movie = nullptr;
-    atk = counter = state = time = 0;
+    atk = state = time = 0;
+    counter = 0;
 }
 
 Plant::~Plant()
