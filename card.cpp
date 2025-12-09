@@ -66,10 +66,17 @@ void Card::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     QDrag *drag = new QDrag(event -> widget());
     QMimeData *mime = new QMimeData;
     QImage image(":/image/cards/" + text + ".png");
+    QImage scaledImage = image.scaled(
+        image.width() * 0.5,
+        image.height() * 0.5,
+        Qt::KeepAspectRatio,
+        Qt::SmoothTransformation
+        );
     mime->setText(text);
     mime->setImageData(image);
     drag->setMimeData(mime);
-    drag->setPixmap(QPixmap::fromImage(image));
+    if (text == "Pepper") drag->setPixmap(QPixmap::fromImage(scaledImage));
+    else drag->setPixmap(QPixmap::fromImage(image));
     drag->setHotSpot(QPoint(35, 35));
     drag->exec();
     setCursor(Qt::ArrowCursor);

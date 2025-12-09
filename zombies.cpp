@@ -36,10 +36,10 @@ Zombies::~Zombies()
 void Zombies::initZombieStats()
 {
     static const QMap<QString, int> baseHealth = {
-        {"normalZombie", 10},
-        {"bucketZombie", 15},
-        {"ConeZombie", 12},
-        {"footballZombie", 12}
+        {"normalZombie", 100},
+        {"bucketZombie", 1000},
+        {"ConeZombie", 300},
+        {"footballZombie", 720}
     };
 
     int baseHP = baseHealth.value(m_name, 10);
@@ -157,7 +157,7 @@ void Zombies::advance(int phase)
                 doEating();
 
                 // 攻击力：足球僵尸更强
-                double damage = (m_name == "footballZombie") ? 1.5 : 1;
+                double damage = (m_name == "footballZombie") ? 2.5 : 3.3;
                 plant->hp -= damage;
                 break;
             }

@@ -7,7 +7,7 @@
 
 Energy::Energy() : isDragging(false){
     counter = 0;
-    cool = 100;
+    cool = 1818;
 }
 
 QRectF Energy::boundingRect() const {
@@ -57,8 +57,8 @@ void Energy::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
     QMimeData *mime = new QMimeData;
     QImage image(":/image/shop/Energy.png");
     QImage scaledImage = image.scaled(
-        image.width() * 0.5,
-        image.height() * 0.5,
+        image.width() * 0.3,
+        image.height() * 0.3,
         Qt::KeepAspectRatio,
         Qt::SmoothTransformation
         );
